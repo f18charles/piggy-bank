@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Category struct {
@@ -16,4 +18,11 @@ type Category struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	User *User `gorm:"foreignKey:UserID" json:"-"`
+}
+
+func (c *Category) BeforeCreate(tx *gorm.DB) error {
+    if c.ID == uuid.Nil {
+        c.ID = uuid.New()
+    }
+    return nil
 }

@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Goal struct {
@@ -15,4 +17,11 @@ type Goal struct {
 	CreatedAt     time.Time  `json:"created_at"`
 
 	User User `gorm:"foreignKey:UserID" json:"-"`
+}
+
+func (g *Goal) BeforeCreate(tx *gorm.DB) error {
+    if g.ID == uuid.Nil {
+        g.ID = uuid.New()
+    }
+    return nil
 }

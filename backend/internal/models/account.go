@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Account struct {
@@ -15,4 +17,10 @@ type Account struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	User User `gorm:"foreignKey:UserID" json:"-"`
+}
+func (a *Account) BeforeCreate(tx *gorm.DB) error {
+    if a.ID == uuid.Nil {
+        a.ID = uuid.New()
+    }
+    return nil
 }

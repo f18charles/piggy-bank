@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Budget struct {
@@ -18,4 +20,11 @@ type Budget struct {
 
 	User     User     `gorm:"foreignKey:UserID" json:"-"`
 	Category Category `gorm:"foreignKey:CategoryID" json:"category"`
+}
+
+func (b *Budget) BeforeCreate(tx *gorm.DB) error {
+    if b.ID == uuid.Nil {
+        b.ID = uuid.New()
+    }
+    return nil
 }

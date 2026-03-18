@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Transaction struct {
@@ -22,4 +24,11 @@ type Transaction struct {
 	User     User      `gorm:"foreignKey:UserID" json:"-"`
 	Account  Account   `gorm:"foreignKey:AccountID" json:"account"`
 	Category *Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"`
+}
+
+func (t *Transaction) BeforeCreate(tx *gorm.DB) error {
+    if t.ID == uuid.Nil {
+        t.ID = uuid.New()
+    }
+    return nil
 }
