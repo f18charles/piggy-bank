@@ -45,7 +45,7 @@ func (bs *BudgetServices) BudgetCreate(user_id uuid.UUID, req BudgetCreateReques
 		UserID:     user_id,
 		CategoryID: *req.CategoryID,
 		Amount:     req.Amount,
-		Spent:      req.Amount,
+		Spent:      req.Spent,
 		Period:     req.Period,
 		StartDate:  *req.StartDate,
 		EndDate:    *req.EndDate,

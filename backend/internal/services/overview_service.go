@@ -1,6 +1,7 @@
 package services
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/repository"
@@ -117,7 +118,7 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 		}
 		if closestGoal.Deadline != nil {
 			days_left := int(time.Until(*closestGoal.Deadline).Hours() / 24)
-			over_view.QuickInsights = append(over_view.QuickInsights, "🎯 You have "+string(rune(days_left))+" days left for '"+closestGoal.Name+"'")
+			over_view.QuickInsights = append(over_view.QuickInsights, "🎯 You have "+strconv.Itoa(days_left)+" days left for '"+closestGoal.Name+"'")
 		}
 	}
 	return over_view, nil

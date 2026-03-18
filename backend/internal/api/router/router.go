@@ -86,7 +86,7 @@ func SetupRouter() *gin.Engine {
 
 		// Summary & Insights
 		protected.GET("/insights/summary/monthly", summaryHandler.MonthlySummary)
-		protected.GET("/insights/summary/yearly", summaryHandler.MonthlySummary)
+		protected.GET("/insights/summary/yearly", summaryHandler.YearlySummary)
 		protected.GET("/insights/overview", overviewHandler.Overview)
 		protected.GET("/insights/spending", spendingInsightsHandler.SpendingInsights)
 	}
