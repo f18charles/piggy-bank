@@ -19,7 +19,7 @@ func TestTransactionCreate(t *testing.T) {
 	svc := services.NewTxService(db)
 
 	t.Run("creates expense transaction with all fields", func(t *testing.T) {
-		req := services.TxCreateRequest{ 
+		req := services.TxCreateRequest{
 			Amount:        250.00,
 			Type:          "expense",
 			Description:   "Lunch",

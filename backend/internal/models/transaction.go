@@ -27,8 +27,8 @@ type Transaction struct {
 }
 
 func (t *Transaction) BeforeCreate(tx *gorm.DB) error {
-    if t.ID == uuid.Nil {
-        t.ID = uuid.New()
-    }
-    return nil
+	if t.ID == uuid.Nil {
+		t.ID = uuid.New()
+	}
+	return nil
 }

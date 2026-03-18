@@ -29,8 +29,8 @@ func TestRegisterUser(t *testing.T) {
 		assert.Equal(t, req.Email, user.Email)
 		assert.Equal(t, req.FullName, user.FullName)
 		assert.Equal(t, "KES", user.Currency)
-		assert.NotEmpty(t, user.PasswordHash)                  // should be hidden via json:"-"
-		assert.NotEqual(t, req.Password, user.PasswordHash) 	// never stored as plaintext
+		assert.NotEmpty(t, user.PasswordHash)               // should be hidden via json:"-"
+		assert.NotEqual(t, req.Password, user.PasswordHash) // never stored as plaintext
 	})
 
 	t.Run("duplicate email returns ErrAlreadyExists", func(t *testing.T) {

@@ -12,7 +12,7 @@ import (
 func TestGetMonthlySummary(t *testing.T) {
 	db := setupTestDB(t)
 	user := seedUser(t, db, "summary@example.com")
-	_ = seedAccount(t, db, user.ID, "bank")
+	acc := seedAccount(t, db, user.ID, "bank")
 	svc := services.NewSummaryService(db)
 
 	now := time.Now()
@@ -33,17 +33,17 @@ func TestGetMonthlySummary(t *testing.T) {
 
 		// seed income
 		txSvc.TxCreate(user.ID, services.TxCreateRequest{
-			Amount: 50000, Type: "income",
+			AccountID: acc.ID, Amount: 50000, Type: "income",
 			Description: "Salary", PaymentMethod: "bank_transfer", Status: "completed",
 		})
 
 		// seed expenses
 		txSvc.TxCreate(user.ID, services.TxCreateRequest{
-			Amount: 5000, Type: "expense",
+			AccountID: acc.ID, Amount: 5000, Type: "expense",
 			Description: "Rent", PaymentMethod: "bank_transfer", Status: "completed",
 		})
 		txSvc.TxCreate(user.ID, services.TxCreateRequest{
-			Amount: 2000, Type: "expense",
+			AccountID: acc.ID, Amount: 2000, Type: "expense",
 			Description: "Food", PaymentMethod: "cash", Status: "completed",
 		})
 
@@ -56,15 +56,15 @@ func TestGetMonthlySummary(t *testing.T) {
 
 	t.Run("savings rate is calculated correctly", func(t *testing.T) {
 		fresh := seedUser(t, db, "savingsrate@example.com")
-		_ = seedAccount(t, db, fresh.ID, "bank")
+		freshAcc := seedAccount(t, db, fresh.ID, "bank")
 		txSvc := services.NewTxService(db)
 
 		txSvc.TxCreate(fresh.ID, services.TxCreateRequest{
-			Amount: 10000, Type: "income",
+			AccountID: freshAcc.ID, Amount: 10000, Type: "income",
 			Description: "Income", PaymentMethod: "bank_transfer", Status: "completed",
 		})
 		txSvc.TxCreate(fresh.ID, services.TxCreateRequest{
-			Amount: 2500, Type: "expense",
+			AccountID: freshAcc.ID, Amount: 2500, Type: "expense",
 			Description: "Expense", PaymentMethod: "cash", Status: "completed",
 		})
 
@@ -75,12 +75,12 @@ func TestGetMonthlySummary(t *testing.T) {
 
 	t.Run("by category breakdown is populated", func(t *testing.T) {
 		catUser := seedUser(t, db, "catbreakdown@example.com")
-		_ = seedAccount(t, db, catUser.ID, "bank")
+		catAcc := seedAccount(t, db, catUser.ID, "bank")
 		cat := seedCategory(t, db, catUser.ID, "Food", "expense")
 		txSvc := services.NewTxService(db)
 
 		txSvc.TxCreate(catUser.ID, services.TxCreateRequest{
-			CategoryID: &cat.ID, Amount: 3000, Type: "expense",
+			AccountID: catAcc.ID, CategoryID: &cat.ID, Amount: 3000, Type: "expense",
 			Description: "Groceries", PaymentMethod: "cash", Status: "completed",
 		})
 
@@ -114,7 +114,7 @@ func TestGetYearlySummary(t *testing.T) {
 func TestGetSpendingInsights(t *testing.T) {
 	db := setupTestDB(t)
 	user := seedUser(t, db, "insights@example.com")
-	_ = seedAccount(t, db, user.ID, "bank")
+	acc := seedAccount(t, db, user.ID, "bank")
 	cat := seedCategory(t, db, user.ID, "Food", "expense")
 	svc := services.NewInsightsService(db)
 	txSvc := services.NewTxService(db)
@@ -138,7 +138,7 @@ func TestGetSpendingInsights(t *testing.T) {
 		// seed enough spend in Food to exceed 5% threshold
 		for i := 0; i < 5; i++ {
 			txSvc.TxCreate(user.ID, services.TxCreateRequest{
-				CategoryID: &cat.ID, Amount: 1000, Type: "expense",
+				AccountID: acc.ID, CategoryID: &cat.ID, Amount: 1000, Type: "expense",
 				Description: "Food purchase", PaymentMethod: "cash", Status: "completed",
 			})
 		}
@@ -160,20 +160,20 @@ func TestGetSpendingInsights(t *testing.T) {
 
 	t.Run("anomaly detected for transaction 3x the average", func(t *testing.T) {
 		anomalyUser := seedUser(t, db, "anomaly@example.com")
-		_ = seedAccount(t, db, anomalyUser.ID, "bank")
+		anomalyAcc := seedAccount(t, db, anomalyUser.ID, "bank")
 		anomalyCat := seedCategory(t, db, anomalyUser.ID, "Shopping", "expense")
 
 		// seed normal transactions to establish average (~500)
 		for i := 0; i < 5; i++ {
 			txSvc.TxCreate(anomalyUser.ID, services.TxCreateRequest{
-				CategoryID: &anomalyCat.ID, Amount: 500, Type: "expense",
+				AccountID: anomalyAcc.ID, CategoryID: &anomalyCat.ID, Amount: 500, Type: "expense",
 				Description: "Normal spend", PaymentMethod: "cash", Status: "completed",
 			})
 		}
 
 		// seed one outlier (10x normal)
 		txSvc.TxCreate(anomalyUser.ID, services.TxCreateRequest{
-			CategoryID: &anomalyCat.ID, Amount: 5000, Type: "expense",
+			AccountID: anomalyAcc.ID, CategoryID: &anomalyCat.ID, Amount: 5000, Type: "expense",
 			Description: "Unusual spend", PaymentMethod: "cash", Status: "completed",
 		})
 

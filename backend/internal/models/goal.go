@@ -20,8 +20,8 @@ type Goal struct {
 }
 
 func (g *Goal) BeforeCreate(tx *gorm.DB) error {
-    if g.ID == uuid.Nil {
-        g.ID = uuid.New()
-    }
-    return nil
+	if g.ID == uuid.Nil {
+		g.ID = uuid.New()
+	}
+	return nil
 }

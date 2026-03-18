@@ -31,8 +31,31 @@ func NewSummaryService(db *gorm.DB) *SummaryService {
 	}
 }
 
+// GetMonthlySummary returns the summary for the given month and attaches the
+// previous month's summary for comparison. It does NOT recurse further than
+// one level back.
 func (s *SummaryService) GetMonthlySummary(user_id uuid.UUID, year int, month time.Month) (*summary.MonthlySummary, error) {
-	// Get all transactions for the month
+	mon_summary, err := s.buildMonthlySummary(user_id, year, month)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fetch the previous month once — no further recursion.
+	prevMonth := month - 1
+	prevYear := year
+	if prevMonth == 0 {
+		prevMonth = 12
+		prevYear--
+	}
+	prevmon_Summary, _ := s.buildMonthlySummary(user_id, prevYear, prevMonth)
+	mon_summary.PreviousMonth = prevmon_Summary
+
+	return mon_summary, nil
+}
+
+// buildMonthlySummary does the actual aggregation work for a single month
+// without touching PreviousMonth. Call this internally to avoid recursion.
+func (s *SummaryService) buildMonthlySummary(user_id uuid.UUID, year int, month time.Month) (*summary.MonthlySummary, error) {
 	startDate := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
 	endDate := startDate.AddDate(0, 1, 0)
 
@@ -41,7 +64,6 @@ func (s *SummaryService) GetMonthlySummary(user_id uuid.UUID, year int, month ti
 		return nil, utils.ErrNotFound
 	}
 
-	// Get budgets for the month
 	budgets, err := s.budget_repo.ListBudgetsByUser(user_id)
 	if err != nil {
 		return nil, err
@@ -61,7 +83,6 @@ func (s *SummaryService) GetMonthlySummary(user_id uuid.UUID, year int, month ti
 		categoryMap[c.ID] = c
 	}
 
-	// Build summary
 	mon_summary := &summary.MonthlySummary{
 		UserID:     user_id,
 		Year:       year,
@@ -87,7 +108,6 @@ func (s *SummaryService) GetMonthlySummary(user_id uuid.UUID, year int, month ti
 		mon_summary.SavingsRate = (mon_summary.Savings / mon_summary.Income) * 100
 	}
 
-	// Calculate category breakdowns
 	totalExpenses := mon_summary.Expenses
 	for catID, spent := range categorySpends {
 		category := categoryMap[catID]
@@ -106,28 +126,17 @@ func (s *SummaryService) GetMonthlySummary(user_id uuid.UUID, year int, month ti
 		}
 	}
 
-	// Get previous month for comparison
-	prevMonth := month - 1
-	prevYear := year
-	if prevMonth == 0 {
-		prevMonth = 12
-		prevYear--
-	}
-
-	prevmon_Summary, _ := s.GetMonthlySummary(user_id, prevYear, prevMonth)
-	mon_summary.PreviousMonth = prevmon_Summary
-
 	return mon_summary, nil
 }
 
-// GetYearlySummary aggregates monthly summaries for a year
+// GetYearlySummary aggregates monthly summaries for a year.
 func (s *SummaryService) GetYearlySummary(user_id uuid.UUID, year int) ([]summary.MonthlySummary, error) {
 	var summaries []summary.MonthlySummary
 
 	for month := time.January; month <= time.December; month++ {
 		summary, err := s.GetMonthlySummary(user_id, year, month)
 		if err != nil {
-			continue // Skip months with no data
+			continue
 		}
 		summaries = append(summaries, *summary)
 	}

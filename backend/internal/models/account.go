@@ -18,9 +18,10 @@ type Account struct {
 
 	User User `gorm:"foreignKey:UserID" json:"-"`
 }
+
 func (a *Account) BeforeCreate(tx *gorm.DB) error {
-    if a.ID == uuid.Nil {
-        a.ID = uuid.New()
-    }
-    return nil
+	if a.ID == uuid.Nil {
+		a.ID = uuid.New()
+	}
+	return nil
 }

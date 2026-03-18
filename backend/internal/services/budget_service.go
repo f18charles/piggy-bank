@@ -95,6 +95,9 @@ func (bs *BudgetServices) BudgetUpdate(budget_id, user_id uuid.UUID, req BudgetU
 	if req.EndDate != nil {
 		budget.EndDate = *req.EndDate
 	}
+	if err := bs.budgetRepo.UpdateBudget(budget); err != nil {
+		return nil, err
+	}
 	return budget, nil
 }
 

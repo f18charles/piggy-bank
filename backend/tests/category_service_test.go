@@ -98,12 +98,10 @@ func TestCategoryList(t *testing.T) {
 	svc := services.NewCategoryService(db)
 
 	// seed a system default category (user_id = nil)
-	db.Create(&models.Category{
-		ID:        uuid.New(),
-		Name:      "System Default",
-		Type:      "expense",
-		IsDefault: true,
-	})
+	db.Exec(
+		"INSERT INTO categories (id, user_id, name, type, color, icon, is_default, created_at) VALUES (?, NULL, ?, ?, ?, ?, ?, datetime('now'))",
+		uuid.New().String(), "System Default", "expense", "", "", true,
+	)
 
 	seedCategory(t, db, user.ID, "Personal", "expense")
 

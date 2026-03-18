@@ -15,13 +15,15 @@ import (
 )
 
 type TxCreateRequest struct {
-	CategoryID    *uuid.UUID `json:"category_id" binding:"required"`
-	Amount        float64    `json:"amount" binding:"required"`
-	Type          string     `json:"type" binding:"required"`
-	Description   string     `json:"description" binding:"required"`
-	PaymentMethod string     `json:"payment_method" binding:"required"`
-	ReferenceID   string     `json:"reference_id" binding:"required"`
-	Status        string     `json:"status" binding:"required"`
+	CategoryID      *uuid.UUID `json:"category_id" binding:"required"`
+	AccountID       uuid.UUID  `json:"account_id" binding:"required"`
+	Amount          float64    `json:"amount" binding:"required"`
+	Type            string     `json:"type" binding:"required"`
+	Description     string     `json:"description" binding:"required"`
+	PaymentMethod   string     `json:"payment_method" binding:"required"`
+	ReferenceID     string     `json:"reference_id" binding:"required"`
+	Status          string     `json:"status" binding:"required"`
+	TransactionDate *time.Time `json:"transaction_date"`
 }
 
 type TxService struct {
@@ -42,13 +44,22 @@ type TxUpdateRequest struct {
 // TxCreate creates a new transaction record for a user and saves it via the repository.
 func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.Transaction, error) {
 	tx := &models.Transaction{
-		UserID:        user_id,
-		CategoryID:    req.CategoryID,
-		Amount:        req.Amount,
-		Description:   req.Description,
-		PaymentMethod: req.PaymentMethod,
-		ReferenceID:   req.ReferenceID,
-		Status:        req.Status,
+		UserID:          user_id,
+		CategoryID:      req.CategoryID,
+		AccountID:       req.AccountID,
+		Amount:          req.Amount,
+		Type:            req.Type,
+		Description:     req.Description,
+		PaymentMethod:   req.PaymentMethod,
+		ReferenceID:     req.ReferenceID,
+		Status:          req.Status,
+		TransactionDate: time.Now(),
+	}
+
+	if req.TransactionDate != nil {
+		tx.TransactionDate = *req.TransactionDate
+	} else {
+		tx.TransactionDate = time.Now()
 	}
 
 	if err := ts.txRepo.CreateTransaction(tx); err != nil {

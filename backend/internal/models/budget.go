@@ -23,8 +23,8 @@ type Budget struct {
 }
 
 func (b *Budget) BeforeCreate(tx *gorm.DB) error {
-    if b.ID == uuid.Nil {
-        b.ID = uuid.New()
-    }
-    return nil
+	if b.ID == uuid.Nil {
+		b.ID = uuid.New()
+	}
+	return nil
 }

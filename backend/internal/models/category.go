@@ -21,8 +21,8 @@ type Category struct {
 }
 
 func (c *Category) BeforeCreate(tx *gorm.DB) error {
-    if c.ID == uuid.Nil {
-        c.ID = uuid.New()
-    }
-    return nil
+	if c.ID == uuid.Nil {
+		c.ID = uuid.New()
+	}
+	return nil
 }
