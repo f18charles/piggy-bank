@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/repository"
@@ -178,7 +179,7 @@ func (is *InsightsService) GetSpendingInsights(user_id uuid.UUID, days int) (*in
 
 	if len(the_insights.Anomalies) > 0 {
 		the_insights.Recommendations = append(the_insights.Recommendations,
-			"Found "+string(rune(len(the_insights.Anomalies)))+
+			"Found "+strconv.Itoa(len(the_insights.Anomalies))+
 				" unusual transactions. Review them to ensure they're correct.")
 	}
 
