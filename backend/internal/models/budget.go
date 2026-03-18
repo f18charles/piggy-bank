@@ -8,7 +8,7 @@ import (
 )
 
 type Budget struct {
-	ID         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	ID         uuid.UUID `gorm:"type:uuid;default:primaryKey" json:"id"`
 	UserID     uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
 	CategoryID uuid.UUID `gorm:"type:uuid;not null" json:"category_id"`
 	Amount     float64   `gorm:"type:numeric(15,2);not null" json:"amount"`

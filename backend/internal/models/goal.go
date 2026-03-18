@@ -8,7 +8,7 @@ import (
 )
 
 type Goal struct {
-	ID            uuid.UUID  `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	ID            uuid.UUID  `gorm:"type:uuid;default:primaryKey" json:"id"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null" json:"user_id"`
 	Name          string     `gorm:"not null" json:"name"`
 	TargetAmount  float64    `gorm:"type:numeric(15,2);not null" json:"target_amount"`
