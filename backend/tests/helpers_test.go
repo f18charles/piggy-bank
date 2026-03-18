@@ -19,7 +19,6 @@ import (
 func setupTestDB(t *testing.T) *gorm.DB {
 	t.Helper()
 
-	// set test config values so JWT and other config-dependent code works
 	config.App.JWTSecret = "test-secret"
 	config.App.JWTExpiryMinutes = 60
 	config.App.AppEnv = "test"
@@ -29,8 +28,10 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	})
 	require.NoError(t, err, "failed to open in-memory test database")
 
-	// enable uuid support in SQLite
-	db.Exec("PRAGMA foreign_keys = ON")
+	// Register BeforeCreate hooks so UUIDs are generated in SQLite.
+	// uuid_generate_v4() is PostgreSQL-only and does not run in SQLite,
+	// so without this hook all IDs stay as zero UUIDs and FK constraints fail.
+	registerUUIDHooks(db)
 
 	err = db.AutoMigrate(
 		&models.User{},
@@ -45,8 +46,25 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	return db
 }
 
-// nonExistentUUID returns a UUID that is guaranteed not to exist in any
-// test database, useful for testing not-found and forbidden paths.
+// registerUUIDHooks registers a GORM callback that auto-generates UUIDs for
+// all models before insert, since uuid_generate_v4() is PostgreSQL-only.
+func registerUUIDHooks(db *gorm.DB) {
+	_ = db.Callback().Create().Before("gorm:create").Register("uuid:before_create", func(tx *gorm.DB) {
+		if tx.Statement == nil || tx.Statement.Schema == nil {
+			return
+		}
+		field := tx.Statement.Schema.LookUpField("ID")
+		if field == nil {
+			return
+		}
+		_, zero := field.ValueOf(tx.Statement.Context, tx.Statement.ReflectValue)
+		if zero {
+			_ = field.Set(tx.Statement.Context, tx.Statement.ReflectValue, uuid.New())
+		}
+	})
+}
+
+// nonExistentUUID returns a UUID guaranteed not to exist in any test database.
 func nonExistentUUID() uuid.UUID {
 	return uuid.MustParse("00000000-0000-0000-0000-000000000001")
 }
