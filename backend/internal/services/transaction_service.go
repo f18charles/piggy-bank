@@ -42,7 +42,7 @@ type TxUpdateRequest struct {
 // TxCreate creates a new transaction record for a user and saves it via the repository.
 func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.Transaction, error) {
 	tx := &models.Transaction{
-		UserID: user_id,
+		UserID:        user_id,
 		CategoryID:    req.CategoryID,
 		Amount:        req.Amount,
 		Description:   req.Description,

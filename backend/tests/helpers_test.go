@@ -1,0 +1,65 @@
+package tests
+
+import (
+	"testing"
+
+	"github.com/f18charles/piggy-bank/backend/internal/config"
+	"github.com/f18charles/piggy-bank/backend/internal/models"
+	"github.com/f18charles/piggy-bank/backend/internal/services"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+// setupTestDB creates an in-memory SQLite database, runs auto-migrations for
+// all models, and returns a clean *gorm.DB for use in a single test.
+// Each call gets its own isolated database — tests do not share state.
+func setupTestDB(t *testing.T) *gorm.DB {
+	t.Helper()
+
+	// set test config values so JWT and other config-dependent code works
+	config.App.JWTSecret = "test-secret"
+	config.App.JWTExpiryMinutes = 60
+	config.App.AppEnv = "test"
+
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+	require.NoError(t, err, "failed to open in-memory test database")
+
+	// enable uuid support in SQLite
+	db.Exec("PRAGMA foreign_keys = ON")
+
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Account{},
+		&models.Category{},
+		&models.Transaction{},
+		&models.Budget{},
+		&models.Goal{},
+	)
+	require.NoError(t, err, "failed to run migrations on test database")
+
+	return db
+}
+
+// nonExistentUUID returns a UUID that is guaranteed not to exist in any
+// test database, useful for testing not-found and forbidden paths.
+func nonExistentUUID() uuid.UUID {
+	return uuid.MustParse("00000000-0000-0000-0000-000000000001")
+}
+
+// seedAccount creates an account for a user for use in other tests.
+func seedAccount(t *testing.T, db *gorm.DB, userID uuid.UUID, accType string) *models.Account {
+	t.Helper()
+	svc := services.NewAccService(db)
+	acc, err := svc.AccountCreate(userID, services.AccCreateRequest{
+		Name:    accType + "-account",
+		Type:    accType,
+		Balance: 0,
+	})
+	require.NoError(t, err)
+	return acc
+}
