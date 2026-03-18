@@ -123,12 +123,8 @@ func (sih *SpendingInsightsHandler) SpendingInsights(c *gin.Context) {
 	}
 
 	days_param := c.Query("days")
-	days, err := strconv.Atoi(days_param)
-	if err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "please enter proper days")
-		return
-	}
-
+	days,_ := strconv.Atoi(days_param)
+	
 	spending_insights, err := sih.spendingInsightsService.GetSpendingInsights(id, days)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to load spending insights")
