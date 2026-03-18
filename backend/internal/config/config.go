@@ -44,14 +44,6 @@ func Load() {
 		JWTSecret:        mustGetEnv("JWT_SECRET"),
 		JWTExpiryMinutes: expiryMinutes,
 		AppEnv:           getEnv("APP_ENV", "development"),
-
-		MpesaConsumerKey:    getEnv("MPESA_CONSUMER_KEY", ""),
-		MpesaConsumerSecret: getEnv("MPESA_CONSUMER_SECRET", ""),
-		MpesaShortCode:      getEnv("MPESA_SHORT_CODE", ""),
-		MpesaPassKey:        getEnv("MPESA_PASSKEY", ""),
-		MpesaCallbackURL:    getEnv("MPESA_CALLBACK_URL", ""),
-
-		// ncba
 	}
 }
 

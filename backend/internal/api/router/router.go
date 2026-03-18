@@ -42,11 +42,6 @@ func SetupRouter() *gin.Engine {
 		auth.POST("/login", authHandler.Login)
 	}
 
-	mpesa := v1.Group("/mpesa")
-	{
-		mpesa.POST("/callback", handlers.MpesaCallback)
-	}
-
 	// auth required
 	protected := v1.Group("")
 	protected.Use(middleware.AuthRequired())
@@ -94,12 +89,6 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/insights/summary/yearly", summaryHandler.MonthlySummary)
 		protected.GET("/insights/overview", overviewHandler.Overview)
 		protected.GET("/insights/spending", spendingInsightsHandler.SpendingInsights)
-
-		// Mpesa(authenticated)
-		protected.POST("/mpesa/stk-push", handlers.MpesaSTKPush)
-		protected.GET("/mpesa/status/:id", handlers.MpesaStatus)
-
-		// bank
 	}
 
 	return r
