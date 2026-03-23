@@ -14,14 +14,6 @@ type Config struct {
 	JWTSecret        string
 	JWTExpiryMinutes int
 	AppEnv           string
-
-	MpesaConsumerKey    string
-	MpesaConsumerSecret string
-	MpesaShortCode      string
-	MpesaPassKey        string
-	MpesaCallbackURL    string
-
-	// ncba
 }
 
 var App Config
