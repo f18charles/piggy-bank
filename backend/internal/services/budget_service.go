@@ -16,7 +16,7 @@ type BudgetServices struct {
 }
 
 // NewBudgetRepo creates and returns a BudgetServices instance with an initialized repository.
-func NewBudgetRepo(db *gorm.DB) *BudgetServices {
+func NewBudgetService(db *gorm.DB) *BudgetServices {
 	return &BudgetServices{
 		budgetRepo: repository.NewBudgetRepo(db),
 	}

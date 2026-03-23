@@ -17,7 +17,7 @@ type BudgetHandler struct {
 
 func NewBudgetHandler(db *gorm.DB) *BudgetHandler {
 	return &BudgetHandler{
-		budgetService: *services.NewBudgetRepo(db),
+		budgetService: *services.NewBudgetService(db),
 	}
 }
 

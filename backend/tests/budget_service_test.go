@@ -14,7 +14,7 @@ func TestBudgetCreate(t *testing.T) {
 	db := setupTestDB(t)
 	user := seedUser(t, db, "budget@example.com")
 	cat := seedCategory(t, db, user.ID, "Food", "expense")
-	svc := services.NewBudgetRepo(db)
+	svc := services.NewBudgetService(db)
 
 	start := time.Now()
 	end := start.AddDate(0, 1, 0)
@@ -83,7 +83,7 @@ func TestBudgetGet(t *testing.T) {
 	user := seedUser(t, db, "budgetget@example.com")
 	other := seedUser(t, db, "budgetget2@example.com")
 	cat := seedCategory(t, db, user.ID, "Transport", "expense")
-	svc := services.NewBudgetRepo(db)
+	svc := services.NewBudgetService(db)
 
 	start := time.Now()
 	end := start.AddDate(0, 1, 0)
@@ -117,7 +117,7 @@ func TestBudgetUpdate(t *testing.T) {
 	user := seedUser(t, db, "budgetupdate@example.com")
 	other := seedUser(t, db, "budgetupdate2@example.com")
 	cat := seedCategory(t, db, user.ID, "Entertainment", "expense")
-	svc := services.NewBudgetRepo(db)
+	svc := services.NewBudgetService(db)
 
 	start := time.Now()
 	end := start.AddDate(0, 1, 0)
@@ -156,7 +156,7 @@ func TestBudgetList(t *testing.T) {
 	user := seedUser(t, db, "budgetlist@example.com")
 	cat1 := seedCategory(t, db, user.ID, "Food", "expense")
 	cat2 := seedCategory(t, db, user.ID, "Rent", "expense")
-	svc := services.NewBudgetRepo(db)
+	svc := services.NewBudgetService(db)
 
 	start := time.Now()
 	end := start.AddDate(0, 1, 0)
@@ -189,7 +189,7 @@ func TestBudgetDelete(t *testing.T) {
 	db := setupTestDB(t)
 	user := seedUser(t, db, "budgetdel@example.com")
 	cat := seedCategory(t, db, user.ID, "Shopping", "expense")
-	svc := services.NewBudgetRepo(db)
+	svc := services.NewBudgetService(db)
 
 	start := time.Now()
 	end := start.AddDate(0, 1, 0)
