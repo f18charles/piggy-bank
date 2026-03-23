@@ -52,7 +52,7 @@ func (bs *BudgetServices) BudgetCreate(user_id uuid.UUID, req BudgetCreateReques
 	}
 
 	var end_date time.Time
-	if req.StartDate != nil {
+	if req.EndDate != nil {
 		end_date = *req.EndDate
 	}
 
