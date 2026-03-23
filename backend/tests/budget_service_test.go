@@ -47,6 +47,35 @@ func TestBudgetCreate(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 0.0, budget.Spent, "Spent must start at 0, not copied from Amount")
 	})
+
+	t.Run("handles nil dates safely", func(t *testing.T) {
+		req := services.BudgetCreateRequest{
+			CategoryID: &cat.ID,
+			Amount:     2000.00,
+			Period:     "monthly",
+			StartDate:  nil,
+			EndDate:    nil,
+		}
+
+		budget, err := svc.BudgetCreate(user.ID, req)
+		require.NoError(t, err)
+
+		assert.NotNil(t, budget)
+		assert.True(t, budget.StartDate.IsZero())
+		assert.True(t, budget.EndDate.IsZero())
+	})
+
+	t.Run("fails when category_id is nil", func(t *testing.T) {
+		req := services.BudgetCreateRequest{
+			CategoryID: nil,
+			Amount:     2000.00,
+			Period:     "monthly",
+		}
+
+		budget, err := svc.BudgetCreate(user.ID, req)
+		require.Error(t, err)
+		assert.Nil(t, budget)
+	})
 }
 
 func TestBudgetGet(t *testing.T) {

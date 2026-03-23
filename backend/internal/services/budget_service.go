@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/models"
@@ -41,14 +42,28 @@ type BudgetUpdateRequest struct {
 
 // BudgetCreate creates a new budget for the given user based on the request and saves it via the repository.
 func (bs *BudgetServices) BudgetCreate(user_id uuid.UUID, req BudgetCreateRequest) (*models.Budget, error) {
+	if req.CategoryID == nil {
+		return nil, errors.New("Category id required")
+	}
+
+	var start_date time.Time
+	if req.StartDate != nil {
+		start_date = *req.StartDate
+	}
+
+	var end_date time.Time
+	if req.StartDate != nil {
+		end_date = *req.EndDate
+	}
+
 	budget := &models.Budget{
 		UserID:     user_id,
 		CategoryID: *req.CategoryID,
 		Amount:     req.Amount,
 		Spent:      req.Spent,
 		Period:     req.Period,
-		StartDate:  *req.StartDate,
-		EndDate:    *req.EndDate,
+		StartDate:  start_date,
+		EndDate:    end_date,
 	}
 	if err := bs.budgetRepo.CreateBudget(budget); err != nil {
 		return nil, err
