@@ -166,7 +166,7 @@ func (is *InsightsService) GetSpendingInsights(user_id uuid.UUID, days int) (*in
 		biggestCat := the_insights.TopCategories[0]
 		the_insights.Recommendations = append(the_insights.Recommendations,
 			"Your biggest expense is "+biggestCat.CategoryName+
-				" (KES "+formatFloat(biggestCat.TotalSpent)+"). "+
+				" ("+formatFloat(biggestCat.TotalSpent)+"). "+
 				"Can you reduce it by 10%?")
 	}
 
