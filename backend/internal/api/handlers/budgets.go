@@ -105,7 +105,7 @@ func (bh *BudgetHandler) UpdateBudget(c *gin.Context) {
 
 // DeleteBudget deletes a budget owned by the authenticated user.
 func (bh *BudgetHandler) DeleteBudget(c *gin.Context) {
-	_, err := auth.ConfirmAuthedUser(c)
+	id, err := auth.ConfirmAuthedUser(c)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -116,7 +116,7 @@ func (bh *BudgetHandler) DeleteBudget(c *gin.Context) {
 		utils.ErrorResponse(c, http.StatusBadRequest, "invalid goal id")
 		return
 	}
-	err = bh.budgetService.BudgetDelete(budget_id)
+	err = bh.budgetService.BudgetDelete(budget_id, id)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to delete budget")
 		return

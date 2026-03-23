@@ -173,7 +173,7 @@ func TestBudgetDelete(t *testing.T) {
 	})
 
 	t.Run("deletes budget successfully", func(t *testing.T) {
-		err := svc.BudgetDelete(budget.ID)
+		err := svc.BudgetDelete(budget.ID, user.ID)
 		require.NoError(t, err)
 
 		_, err = svc.BudgetGet(user.ID, budget.ID)
