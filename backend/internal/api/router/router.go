@@ -54,34 +54,34 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/accounts", accountHandler.ListAccounts)
 		protected.POST("/accounts", accountHandler.CreateAccount)
 		protected.GET("/accounts/:id", accountHandler.GetAccount)
-		protected.PUT("/accounts/:id", accountHandler.UpdateAccount)
+		protected.PATCH("/accounts/:id", accountHandler.UpdateAccount)
 		protected.DELETE("/accounts/:id", accountHandler.DeleteAccount)
 
 		// Transactions
 		protected.GET("/transactions", txHandler.ListTransactions)
 		protected.POST("/transactions", txHandler.CreateTransactions)
 		protected.GET("/transactions/:id", txHandler.GetTransaction)
-		protected.PUT("/transactions/:id", txHandler.UpdateTransaction)
+		protected.PATCH("/transactions/:id", txHandler.UpdateTransaction)
 		protected.GET("/transactions/export", txHandler.ExportTransactions)
 
 		// Categories
 		protected.GET("/categories", categoryHandler.ListCategories)
 		protected.POST("/categories", categoryHandler.CreateCategory)
-		protected.PUT("/categories/:id", categoryHandler.UpdateCategory)
+		protected.PATCH("/categories/:id", categoryHandler.UpdateCategory)
 		protected.DELETE("/categories/:id", categoryHandler.DeleteCategory)
 
 		// Budgets
 		protected.GET("/budgets", budgetHandler.Listbudgets)
 		protected.POST("/budgets", budgetHandler.CreateBudget)
 		protected.GET("/budgets/:id", budgetHandler.GetBudget)
-		protected.PUT("/budgets/:id", budgetHandler.UpdateBudget)
+		protected.PATCH("/budgets/:id", budgetHandler.UpdateBudget)
 		protected.DELETE("/budgets/:id", budgetHandler.DeleteBudget)
 
 		//	Goals
 		protected.GET("/goals", goalHandler.ListGoals)
 		protected.POST("/goals", goalHandler.CreateGoal)
 		protected.GET("/goals/:id", goalHandler.GetGoal)
-		protected.PUT("/goals/:id", goalHandler.UpdateGoal)
+		protected.PATCH("/goals/:id", goalHandler.UpdateGoal)
 		protected.DELETE("/goals/:id", goalHandler.DeleteGoal)
 
 		// Summary & Insights
