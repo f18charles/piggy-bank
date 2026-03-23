@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/services"
 	"github.com/f18charles/piggy-bank/backend/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -23,14 +24,9 @@ func NewTxHandler(db *gorm.DB) *TransactionHandler {
 
 // ListTransactions returns a paginated list of transactions for the user.
 func (th *TransactionHandler) ListTransactions(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-	id, ok := userID.(uuid.UUID)
-	if !ok {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "invalid user")
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 	txs, err := th.transactionService.TxList(id)
@@ -44,14 +40,9 @@ func (th *TransactionHandler) ListTransactions(c *gin.Context) {
 
 // CreateTransactions records a new transaction for the authenticated user.
 func (th *TransactionHandler) CreateTransactions(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-	id, ok := userID.(uuid.UUID)
-	if !ok {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "invalid user")
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 	var txreq services.TxCreateRequest
@@ -69,14 +60,9 @@ func (th *TransactionHandler) CreateTransactions(c *gin.Context) {
 
 // GetTransaction retrieves a single transaction by ID for the authenticated user.
 func (th *TransactionHandler) GetTransaction(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-	id, ok := userID.(uuid.UUID)
-	if !ok {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "invalid user")
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 	paramID := c.Param("id")
@@ -95,13 +81,11 @@ func (th *TransactionHandler) GetTransaction(c *gin.Context) {
 
 // UpdateTransaction updates an existing transaction owned by the user.
 func (th *TransactionHandler) UpdateTransaction(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "unauthorized")
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	id := userID.(uuid.UUID)
-
 	paramID := c.Param("id")
 	txID, err := uuid.Parse(paramID)
 	if err != nil {
@@ -125,14 +109,9 @@ func (th *TransactionHandler) UpdateTransaction(c *gin.Context) {
 
 // ExportTransactions exports transactions (CSV/other) for the user.
 func (th *TransactionHandler) ExportTransactions(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.ErrorResponse(c, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-	id, ok := userID.(uuid.UUID)
-	if !ok {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "invalid user")
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 

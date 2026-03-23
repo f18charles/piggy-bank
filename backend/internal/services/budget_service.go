@@ -129,11 +129,11 @@ func (bs *BudgetServices) BudgetList(user_id uuid.UUID) ([]models.Budget, error)
 func (bs *BudgetServices) BudgetDelete(budget_id, user_id uuid.UUID) error {
 	budget, err := bs.budgetRepo.GetBudgetByID(budget_id)
 	if err != nil {
-		return  err
+		return err
 	}
 	if budget.UserID != user_id {
 		return utils.ErrForbidden
-	} 
+	}
 	if err := bs.budgetRepo.DeleteBudget(budget_id); err != nil {
 		return err
 	}

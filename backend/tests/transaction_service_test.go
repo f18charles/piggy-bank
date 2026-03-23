@@ -20,7 +20,7 @@ func TestTransactionCreate(t *testing.T) {
 
 	t.Run("creates expense transaction with all fields", func(t *testing.T) {
 		req := services.TxCreateRequest{
-			AccountID: acc.ID,
+			AccountID:     acc.ID,
 			Amount:        250.00,
 			Type:          "expense",
 			Description:   "Lunch",
