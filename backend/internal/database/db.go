@@ -11,21 +11,6 @@ import (
 
 var DB *gorm.DB
 
-// Connect initializes the global database connection using settings from
-// config.App. It sets connection pool parameters and assigns the global DB.
-package database
-
-import (
-	"log"
-
-	"github.com/f18charles/piggy-bank/backend/internal/config"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-)
-
-var DB *gorm.DB
-
 // Connect initializes the global database connection
 func Connect() {
 	var logLevel logger.LogLevel
