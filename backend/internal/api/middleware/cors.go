@@ -11,7 +11,7 @@ import (
 // the frontend dev environment. It short-circuits OPTIONS requests with 204.
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		origin := "https://pggybank.netlify.app/"
+		origin := "https://pggybank.netlify.app"
 		if config.App.AppEnv == "production" {
 			origin = "https://domain.com" // frontend when hosted
 		}
