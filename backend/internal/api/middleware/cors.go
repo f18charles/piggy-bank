@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/f18charles/piggy-bank/backend/internal/config"
+	// "github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/gin-gonic/gin"
 )
 
