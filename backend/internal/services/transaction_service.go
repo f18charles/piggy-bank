@@ -67,20 +67,20 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 	}
 
 	// Update account balance
-    var account models.Account
-    if err := ts.txRepo.Db.First(&account, "id = ?", req.AccountID).Error; err != nil {
-        return nil, err
-    }
-    
-    if req.Type == "income" {
-        account.Balance += req.Amount
-    } else {
-        account.Balance -= req.Amount
-    }
-    
-    if err := ts.txRepo.Db.Save(&account).Error; err != nil {
-        return nil, err
-    }
+	var account models.Account
+	if err := ts.txRepo.Db.First(&account, "id = ?", req.AccountID).Error; err != nil {
+		return nil, err
+	}
+
+	if req.Type == "income" {
+		account.Balance += req.Amount
+	} else {
+		account.Balance -= req.Amount
+	}
+
+	if err := ts.txRepo.Db.Save(&account).Error; err != nil {
+		return nil, err
+	}
 	return tx, nil
 }
 
