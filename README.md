@@ -18,7 +18,7 @@ A personal finance management web app built with Go and React. Piggy Bank lets y
 |---|---|
 | Backend | Go (Gin framework) |
 | Database | PostgreSQL |
-| Frontend | React (Vite) |
+| Frontend | React (Vite) (currently the frontend is on [pb_frontend](https://github.com/f18charles/pb_frontend) for a short demo) | 
 | Auth | JWT |
 | Payments | M-Pesa Daraja API, NCBA API |
 | Notifications | Africa's Talking (SMS), SendGrid (email) |
