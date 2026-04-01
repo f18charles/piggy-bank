@@ -10,23 +10,23 @@ import (
 )
 
 type TransactionRepo struct {
-	db *gorm.DB
+	Db *gorm.DB
 }
 
 func NewTransactionRepo(db *gorm.DB) *TransactionRepo {
 	return &TransactionRepo{
-		db: db,
+		Db: db,
 	}
 }
 
 func (tr *TransactionRepo) CreateTransaction(tx *models.Transaction) error {
-	result := tr.db.Create(tx)
+	result := tr.Db.Create(tx)
 	return result.Error
 }
 
 func (tr *TransactionRepo) GetTransactionByID(txID uuid.UUID) (*models.Transaction, error) {
 	var tx models.Transaction
-	result := tr.db.Where("id = ?", txID).First(&tx)
+	result := tr.Db.Where("id = ?", txID).First(&tx)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, utils.ErrNotFound
@@ -37,13 +37,13 @@ func (tr *TransactionRepo) GetTransactionByID(txID uuid.UUID) (*models.Transacti
 }
 
 func (tr *TransactionRepo) UpdateTransaction(tx *models.Transaction) error {
-	result := tr.db.Save(tx)
+	result := tr.Db.Save(tx)
 	return result.Error
 }
 
 func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Transaction, error) {
 	txs := []models.Transaction{}
-	result := tr.db.Where("user_id = ?", userID).Find(&txs)
+	result := tr.Db.Where("user_id = ?", userID).Find(&txs)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -51,7 +51,7 @@ func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Tr
 }
 
 func (tr *TransactionRepo) DeleteTransaction(id uuid.UUID) error {
-	result := tr.db.Delete(&models.Transaction{}, "id = ?", id)
+	result := tr.Db.Delete(&models.Transaction{}, "id = ?", id)
 	if result.Error != nil {
 		return result.Error
 	}
