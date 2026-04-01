@@ -25,7 +25,7 @@ func (br *BudgetRepo) CreateBudget(budget *models.Budget) error {
 
 func (br *BudgetRepo) GetBudgetByID(budget_id uuid.UUID) (*models.Budget, error) {
 	var budget models.Budget
-	result := br.db.Where("id = ?", budget_id).First(&budget)
+	result := br.db.Where("id = ?", budget_id).Preload("Category").First(&budget)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, utils.ErrNotFound
@@ -41,7 +41,7 @@ func (br *BudgetRepo) UpdateBudget(budget *models.Budget) error {
 
 func (br *BudgetRepo) ListBudgetsByUser(user_id uuid.UUID) ([]models.Budget, error) {
 	budgets := []models.Budget{}
-	result := br.db.Where("user_id = ?", user_id).Find(&budgets)
+	result := br.db.Where("user_id = ?", user_id).Preload("Category").Find(&budgets)
 	if result.Error != nil {
 		return nil, result.Error
 	}
