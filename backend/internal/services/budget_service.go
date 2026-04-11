@@ -113,7 +113,7 @@ func (bs *BudgetServices) BudgetUpdate(budget_id, user_id uuid.UUID, req BudgetU
 	if err := bs.budgetRepo.UpdateBudget(budget); err != nil {
 		return nil, err
 	}
-	return budget, nil
+	return bs.budgetRepo.GetBudgetByID(budget.ID)
 }
 
 // BudgetList returns all budgets that belong to the specified user.

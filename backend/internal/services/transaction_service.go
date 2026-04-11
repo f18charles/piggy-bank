@@ -21,7 +21,7 @@ type TxCreateRequest struct {
 	Type            string     `json:"type" binding:"required"`
 	Description     string     `json:"description" binding:"required"`
 	PaymentMethod   string     `json:"payment_method" binding:"required"`
-	ReferenceID     string     `json:"reference_id" binding:"required"`
+	ReferenceID     string     `json:"reference_id"`
 	Status          string     `json:"status" binding:"required"`
 	TransactionDate *time.Time `json:"transaction_date"`
 }
