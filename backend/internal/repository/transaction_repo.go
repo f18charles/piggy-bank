@@ -26,7 +26,7 @@ func (tr *TransactionRepo) CreateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) GetTransactionByID(txID uuid.UUID) (*models.Transaction, error) {
 	var tx models.Transaction
-	result := tr.Db.Where("id = ?", txID).First(&tx)
+	result := tr.Db.Where("id = ?", txID).Preload("Account").Preload("Category").First(&tx)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, utils.ErrNotFound
@@ -43,7 +43,7 @@ func (tr *TransactionRepo) UpdateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Transaction, error) {
 	txs := []models.Transaction{}
-	result := tr.Db.Where("user_id = ?", userID).Find(&txs)
+	result := tr.Db.Where("user_id = ?", userID).Preload("Account").Preload("Category").Find(&txs)
 	if result.Error != nil {
 		return nil, result.Error
 	}

@@ -98,7 +98,7 @@ func (cs *CategoryService) CategoryGet(user_id, cat_id uuid.UUID) (*models.Categ
 	if err != nil {
 		return nil, err
 	}
-	if cat.UserID != user_id {
+	if !cat.IsDefault && cat.UserID != user_id {
 		return nil, utils.ErrForbidden
 	}
 	return cat, nil

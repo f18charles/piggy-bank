@@ -15,7 +15,7 @@ import (
 )
 
 type TxCreateRequest struct {
-	CategoryID      *uuid.UUID `json:"category_id" binding:"required"`
+	CategoryID      *uuid.UUID `json:"category_id"`
 	AccountID       uuid.UUID  `json:"account_id" binding:"required"`
 	Amount          float64    `json:"amount" binding:"required"`
 	Type            string     `json:"type" binding:"required"`
@@ -81,7 +81,7 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 	if err := ts.txRepo.Db.Save(&account).Error; err != nil {
 		return nil, err
 	}
-	return tx, nil
+	return ts.txRepo.GetTransactionByID(tx.ID)
 }
 
 // TxGet retrieves a transaction by ID and ensures the requesting user owns it.

@@ -68,7 +68,7 @@ func (bs *BudgetServices) BudgetCreate(user_id uuid.UUID, req BudgetCreateReques
 	if err := bs.budgetRepo.CreateBudget(budget); err != nil {
 		return nil, err
 	}
-	return budget, nil
+	return bs.budgetRepo.GetBudgetByID(budget.ID)
 }
 
 // BudgetGet retrieves a budget by ID and ensures the requesting user owns it.
