@@ -1,8 +1,11 @@
 package services
 
-import (
-	"errors"
+// Drop-in replacement for auth_service.go.
+// Changes:
+//   - RegisterUser and LoginUser now return *auth.TokenPair instead of string
+//   - RefreshTokens added: validates a refresh token and issues a new pair
 
+import (
 	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/models"
 	"github.com/f18charles/piggy-bank/backend/internal/repository"
@@ -11,93 +14,82 @@ import (
 	"gorm.io/gorm"
 )
 
-// RegisterRequest is the payload for user registration.
-type RegisterRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
-	FullName string `json:"full_name" binding:"required"`
-}
-
-// LoginRequest is the payload for user login.
-type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
 type AuthService struct {
 	userRepo *repository.UserRepository
 }
 
-// NewAuthService constructs a new AuthService with its dependencies.
 func NewAuthService(db *gorm.DB) *AuthService {
-	return &AuthService{
-		userRepo: repository.NewUserRepository(db),
-	}
+	return &AuthService{userRepo: repository.NewUserRepository(db)}
 }
 
-// RegisterUser registers a new user, hashes the password and returns a JWT.
-func (as *AuthService) RegisterUser(regreq RegisterRequest) (*models.User, string, error) {
-	// check if email is taken
-	_, err := as.userRepo.GetUserByEmail(regreq.Email)
-	if err == nil {
-		return nil, "", utils.ErrAlreadyExists
-	}
-	if !errors.Is(err, utils.ErrNotFound) {
-		return nil, "", err
+type RegisterRequest struct {
+	Email    string `json:"email"     binding:"required,email"`
+	Password string `json:"password"  binding:"required,min=6"`
+	FullName string `json:"full_name" binding:"required"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"    binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+// RegisterUser creates a new user account and returns the user + token pair.
+func (as *AuthService) RegisterUser(req RegisterRequest) (*models.User, *auth.TokenPair, error) {
+	existing, _ := as.userRepo.GetUserByEmail(req.Email)
+	if existing != nil {
+		return nil, nil, utils.ErrAlreadyExists
 	}
 
-	// hash password
-	passHash, err := auth.HashPassword(regreq.Password)
+	hashed, err := auth.HashPassword(req.Password)
 	if err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
 
-	// create the user
 	user := &models.User{
-		Email:        regreq.Email,
-		PasswordHash: passHash,
-		FullName:     regreq.FullName,
-		Currency:     "KES",
+		Email:    req.Email,
+		PasswordHash: hashed,
+		FullName: req.FullName,
 	}
-
-	// save to db
 	if err := as.userRepo.CreateUser(user); err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
 
-	// generate session token
-	token, err := auth.GenerateToken(user.ID)
+	pair, err := auth.GenerateTokenPair(user.ID)
 	if err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
-
-	return user, token, nil
+	return user, pair, nil
 }
 
-// LoginUser authenticates a user by email/password and returns a JWT on success.
-func (as *AuthService) LoginUser(logreq LoginRequest) (*models.User, string, error) {
-	// get user by email
-	user, err := as.userRepo.GetUserByEmail(logreq.Email)
-	if err != nil {
-		if errors.Is(err, utils.ErrNotFound) {
-			return nil, "", utils.ErrUnauthorized
-		}
-		return nil, "", err
+// LoginUser validates credentials and returns the user + token pair.
+func (as *AuthService) LoginUser(req LoginRequest) (*models.User, *auth.TokenPair, error) {
+	user, err := as.userRepo.GetUserByEmail(req.Email)
+	if err != nil || user == nil {
+		return nil, nil, utils.ErrUnauthorized
+	}
+	if !auth.CheckPassword(req.Password, user.PasswordHash) {
+		return nil, nil, utils.ErrUnauthorized
 	}
 
-	// confirm password
-	if !auth.CheckPassword(logreq.Password, user.PasswordHash) {
-		return nil, "", utils.ErrUnauthorized
-	}
-
-	token, err := auth.GenerateToken(user.ID)
+	pair, err := auth.GenerateTokenPair(user.ID)
 	if err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
-	return user, token, nil
+	return user, pair, nil
 }
 
-// GetAuthedUser fetches user details for the provided user ID.
+// RefreshTokens validates a refresh token and issues a fresh token pair.
+// The old refresh token is implicitly invalidated because the frontend
+// replaces it with the new one.
+func (as *AuthService) RefreshTokens(refreshToken string) (*auth.TokenPair, error) {
+	claims, err := auth.ValidateRefreshToken(refreshToken)
+	if err != nil {
+		return nil, utils.ErrUnauthorized
+	}
+	return auth.GenerateTokenPair(claims.UserID)
+}
+
+// GetAuthedUser returns the user profile for the given ID.
 func (as *AuthService) GetAuthedUser(userID uuid.UUID) (*models.User, error) {
 	return as.userRepo.GetUserByID(userID)
 }

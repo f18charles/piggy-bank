@@ -1,5 +1,9 @@
 package middleware
 
+// Drop-in replacement for middleware/auth.go.
+// Only change: uses auth.ValidateAccessToken instead of auth.ValidateToken
+// so that refresh tokens cannot be used as access tokens.
+
 import (
 	"net/http"
 	"strings"
@@ -8,9 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthRequired is a Gin middleware that enforces the presence of a valid
-// `Authorization: Bearer <token>` header. On success it stores `user_id` in
-// the request context for downstream handlers to use.
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -25,7 +26,8 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
-		claims, err := auth.ValidateToken(parts[1])
+		// ValidateAccessToken rejects refresh tokens used here
+		claims, err := auth.ValidateAccessToken(parts[1])
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
 			return
