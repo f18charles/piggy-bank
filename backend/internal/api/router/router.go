@@ -40,6 +40,7 @@ func SetupRouter() *gin.Engine {
 	{
 		auth.POST("/register", authHandler.Register)
 		auth.POST("/login", authHandler.Login)
+		auth.POST("/refresh", authHandler.Refresh)
 	}
 
 	// auth required
