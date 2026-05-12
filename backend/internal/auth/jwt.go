@@ -39,6 +39,14 @@ const (
 	refreshTokenDuration = 7 * 24 * time.Hour // 7 days
 )
 
+func accessDuration() time.Duration {
+	minutes := config.App.JWTExpiryMinutes
+	if minutes <= 0 {
+		minutes = 10
+	}
+	return time.Duration(minutes) * time.Minute
+}
+
 type Claims struct {
 	UserID    uuid.UUID `json:"user_id"`
 	TokenType string    `json:"token_type"` // "access" | "refresh"
@@ -55,7 +63,9 @@ type TokenPair struct {
 // GenerateTokenPair creates a fresh access + refresh token pair for the user.
 // Call this on login, register, and every successful /auth/refresh request.
 func GenerateTokenPair(userID uuid.UUID) (*TokenPair, error) {
-	accessToken, err := generateToken(userID, TokenTypeAccess, accessTokenDuration)
+	dur := accessDuration()
+
+	accessToken, err := generateToken(userID, TokenTypeAccess, dur)
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +78,14 @@ func GenerateTokenPair(userID uuid.UUID) (*TokenPair, error) {
 	return &TokenPair{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    int(accessTokenDuration.Seconds()),
+		ExpiresIn:    int(dur.Seconds()),
 	}, nil
 }
 
 // GenerateToken is kept for backward-compat with any callers that only need
 // an access token (e.g. tests). Returns a plain access token string.
 func GenerateToken(userID uuid.UUID) (string, error) {
-	return generateToken(userID, TokenTypeAccess, accessTokenDuration)
+	return generateToken(userID, TokenTypeAccess, accessDuration())
 }
 
 // ValidateToken parses any token and returns its claims.
