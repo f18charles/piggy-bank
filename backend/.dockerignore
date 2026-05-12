@@ -1,0 +1,13 @@
+.git
+.gitignore
+README.md
+docs/
+tests/
+*.md
+*.log
+*.db
+.vscode/
+Dockerfile
+.env.example
+.env
+Makefile
