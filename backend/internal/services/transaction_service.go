@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/models"
@@ -9,6 +10,22 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
+
+type TxService struct {
+	txRepo *repository.TransactionRepo
+}
+
+// NewTxService initializes and returns a TxService with its repository.
+func NewTxService(db *gorm.DB) *TxService {
+	return &TxService{
+		txRepo: repository.NewTransactionRepo(db),
+	}
+}
+
+var validTxTypes = map[string]bool{
+	"income": true,
+	"expendse":true,
+}
 
 type TxCreateRequest struct {
 	CategoryID      *uuid.UUID `json:"category_id"`
@@ -22,23 +39,16 @@ type TxCreateRequest struct {
 	TransactionDate *time.Time `json:"transaction_date"`
 }
 
-type TxService struct {
-	txRepo *repository.TransactionRepo
-}
-
-// NewTxService initializes and returns a TxService with its repository.
-func NewTxService(db *gorm.DB) *TxService {
-	return &TxService{
-		txRepo: repository.NewTransactionRepo(db),
-	}
-}
-
 type TxUpdateRequest struct {
 	Description string `json:"description"`
 }
 
 // TxCreate creates a new transaction record for a user and saves it via the repository.
 func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.Transaction, error) {
+	if !validTxTypes[req.Type] {
+		return nil, errors.New("Type can only be income or exepense")
+	}
+	
 	tx := &models.Transaction{
 		UserID:          user_id,
 		CategoryID:      req.CategoryID,
@@ -58,25 +68,35 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 		tx.TransactionDate = time.Now()
 	}
 
-	if err := ts.txRepo.CreateTransaction(tx); err != nil {
+	err := ts.txRepo.Db.Transaction(func(dbTx *gorm.DB) error {
+		if err := dbTx.Create(tx).Error; err != nil {
+			return err
+		}
+
+		// Update account balance
+		var account models.Account
+		if err := ts.txRepo.Db.First(&account, "id = ?", req.AccountID).Error; err != nil {
+			return err
+		}
+		if req.Type == "income" {
+			account.Balance += req.Amount
+		} else {
+			account.Balance -= req.Amount
+		}
+		if err := dbTx.Save(&account).Error; err != nil {
+			return err
+		}
+
+		if req.Type == "expense" && req.CategoryID != nil {
+			dbTx.Model(&models.Budget{}).Where("user_id = ? AND category_id = ?", user_id, *req.CategoryID).UpdateColumn("spent", gorm.Expr("spent + ?", req.Amount))
+		}
+
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
-
-	// Update account balance
-	var account models.Account
-	if err := ts.txRepo.Db.First(&account, "id = ?", req.AccountID).Error; err != nil {
-		return nil, err
-	}
-
-	if req.Type == "income" {
-		account.Balance += req.Amount
-	} else {
-		account.Balance -= req.Amount
-	}
-
-	if err := ts.txRepo.Db.Save(&account).Error; err != nil {
-		return nil, err
-	}
+	
 	return ts.txRepo.GetTransactionByID(tx.ID)
 }
 
@@ -112,9 +132,5 @@ func (ts *TxService) TxUpdate(user_id, txID uuid.UUID, req TxUpdateRequest) (*mo
 
 // TxList returns all transactions for the specified user.
 func (ts *TxService) TxList(user_id uuid.UUID) ([]models.Transaction, error) {
-	txs, err := ts.txRepo.ListTransactionsByUser(user_id)
-	if err != nil {
-		return nil, err
-	}
-	return txs, nil
+	return ts.txRepo.ListTransactionsByUser(user_id)
 }
