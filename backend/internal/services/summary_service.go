@@ -121,7 +121,7 @@ func (s *SummaryService) GetYearlySummary(user_id uuid.UUID, year int) ([]summar
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var summaries []summary.MonthlySummary
 	for month := time.January; month <= time.December; month++ {
 		summary, err := s.buildMonthlySummary(user_id, year, month, budgets, categories)
@@ -148,7 +148,7 @@ func (s *SummaryService) loadLookups(user_id uuid.UUID) (map[uuid.UUID]float64, 
 	if err != nil {
 		return nil, nil, utils.ErrNotFound
 	}
-	
+
 	category_map := make(map[uuid.UUID]models.Category, len(categories))
 	for _, c := range categories {
 		category_map[c.ID] = c

@@ -23,8 +23,8 @@ func NewTxService(db *gorm.DB) *TxService {
 }
 
 var validTxTypes = map[string]bool{
-	"income": true,
-	"expendse":true,
+	"income":   true,
+	"expendse": true,
 }
 
 type TxCreateRequest struct {
@@ -48,7 +48,7 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 	if !validTxTypes[req.Type] {
 		return nil, errors.New("Type can only be income or exepense")
 	}
-	
+
 	tx := &models.Transaction{
 		UserID:          user_id,
 		CategoryID:      req.CategoryID,
@@ -96,7 +96,7 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return ts.txRepo.GetTransactionByID(tx.ID)
 }
 

@@ -46,9 +46,9 @@ func (as *AuthService) RegisterUser(req RegisterRequest) (*models.User, *auth.To
 	}
 
 	user := &models.User{
-		Email:    req.Email,
+		Email:        req.Email,
 		PasswordHash: hashed,
-		FullName: req.FullName,
+		FullName:     req.FullName,
 	}
 	if err := as.userRepo.CreateUser(user); err != nil {
 		return nil, nil, err
