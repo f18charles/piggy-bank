@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"os"
 
 	// "github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/gin-gonic/gin"
@@ -11,12 +12,9 @@ import (
 // the frontend dev environment. It short-circuits OPTIONS requests with 204.
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// origin := "https://pggybank.netlify.app"
-		// if config.App.AppEnv == "production" {
-		// 	origin = "https://domain.com" // frontend when hosted
-		// }
+		origin := getAllowedOrigin(c.GetHeader("Origin"))
 
-		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Origin", origin)
 		c.Header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
 		c.Header("Access-Control-Allow-Headers", "Origin, Content-type, Authorization")
 		c.Header("Access-Control-Allow-Credentials", "true")
@@ -28,4 +26,14 @@ func CORS() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func getAllowedOrigin(requestOrigin string) string {
+	if envOrigin := os.Getenv("ALLOWED_ORIGIN"); envOrigin != "" {
+		return envOrigin
+	}
+	if requestOrigin != "" {
+		return requestOrigin
+	}
+	return "*"
 }
