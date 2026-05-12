@@ -24,21 +24,11 @@ import (
 // Since ListTransactionsByUser now preloads Account and Category, all names
 // are available directly from the transaction struct — no extra queries needed.
 func (ts *TxService) ExportTx(user_id uuid.UUID, format string) ([]byte, string, error) {
-	all, err := ts.txRepo.ListTransactionsByUser(user_id)
+	cutoff := time.Now().AddDate(0, -3, 0)
+
+	txs, err := ts.txRepo.ListTransactionsByUserSince(user_id, cutoff)
 	if err != nil {
 		return nil, "", err
-	}
-
-	cutoff := time.Now().AddDate(0, -3, 0)
-	var txs []models.Transaction
-	for _, t := range all {
-		td := t.TransactionDate
-		if td.IsZero() {
-			td = t.CreatedAt
-		}
-		if !td.Before(cutoff) {
-			txs = append(txs, t)
-		}
 	}
 
 	if len(txs) == 0 {
