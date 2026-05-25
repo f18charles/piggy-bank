@@ -25,7 +25,7 @@ func NewTxService(db *gorm.DB) *TxService {
 
 var validTxTypes = map[string]bool{
 	"income":   true,
-	"expendse": true,
+	"expense": true,
 }
 
 type TxCreateRequest struct {
@@ -47,7 +47,7 @@ type TxUpdateRequest struct {
 // TxCreate creates a new transaction record for a user and saves it via the repository.
 func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.Transaction, error) {
 	if !validTxTypes[req.Type] {
-		return nil, errors.New("Type can only be income or exepense")
+		return nil, errors.New("Type can only be income or expense")
 	}
 
 	tx := &models.Transaction{
