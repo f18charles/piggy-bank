@@ -6,6 +6,7 @@ import (
 	api "github.com/f18charles/piggy-bank/backend/internal/api/router"
 	"github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/f18charles/piggy-bank/backend/internal/database"
+	"github.com/f18charles/piggy-bank/backend/internal/utils"
 )
 
 func main() {
@@ -14,6 +15,9 @@ func main() {
 
 	// Connect to database
 	database.Connect()
+
+	// setup logger
+	utils.InitLogger(config.App.AppEnv)
 
 	r := api.SetupRouter()
 
