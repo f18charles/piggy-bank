@@ -98,6 +98,7 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 		return nil
 	})
 	if err != nil {
+		slog.Error("transaction creation failed", "user_id", user_id, "error", err)
 		return nil, err
 	}
 
