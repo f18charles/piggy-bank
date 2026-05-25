@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/f18charles/piggy-bank/backend/internal/config"
 	"gorm.io/driver/postgres"
@@ -31,18 +31,20 @@ func Connect() {
 		PrepareStmt: false,
 	})
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		slog.Error("Failed to connect to database: %v", "error", err)
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatalf("Failed to get database instance: %v", err)
+		slog.Error("Failed to get database instance: %v", "error", err)
 	}
 
 	// Reduced connection pool for free tier
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(5)
-
+	
 	DB = db
-	log.Println("Database connected successfully")
+
+	// After gorm.Open succeeds
+	slog.Info("database connected", "max_open", 10, "max_idle", 5)
 }

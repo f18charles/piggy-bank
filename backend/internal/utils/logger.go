@@ -12,7 +12,7 @@ func InitLogger(env string) {
 	} else {
 		level = slog.LevelDebug
 	}
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOption{
-		Level:level
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level:level,
 	})))
 }

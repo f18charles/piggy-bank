@@ -5,6 +5,7 @@ package middleware
 // so that refresh tokens cannot be used as access tokens.
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -29,6 +30,7 @@ func AuthRequired() gin.HandlerFunc {
 		// ValidateAccessToken rejects refresh tokens used here
 		claims, err := auth.ValidateAccessToken(parts[1])
 		if err != nil {
+			slog.Warn("auth rejected", "path", c.Request.URL.Path, "reason", err.Error())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
 			return
 		}

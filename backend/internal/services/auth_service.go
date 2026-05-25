@@ -6,6 +6,8 @@ package services
 //   - RefreshTokens added: validates a refresh token and issues a new pair
 
 import (
+	"log/slog"
+
 	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/models"
 	"github.com/f18charles/piggy-bank/backend/internal/repository"
@@ -54,6 +56,8 @@ func (as *AuthService) RegisterUser(req RegisterRequest) (*models.User, *auth.To
 		return nil, nil, err
 	}
 
+	slog.Info("user registered", "user_id", user.ID)
+
 	pair, err := auth.GenerateTokenPair(user.ID)
 	if err != nil {
 		return nil, nil, err
@@ -65,11 +69,14 @@ func (as *AuthService) RegisterUser(req RegisterRequest) (*models.User, *auth.To
 func (as *AuthService) LoginUser(req LoginRequest) (*models.User, *auth.TokenPair, error) {
 	user, err := as.userRepo.GetUserByEmail(req.Email)
 	if err != nil || user == nil {
+		slog.Warn("Login failed: user not found", "email", req.Email)
 		return nil, nil, utils.ErrUnauthorized
 	}
 	if !auth.CheckPassword(req.Password, user.PasswordHash) {
+		slog.Warn("Login failed: invalid password", "email", req.Email)
 		return nil, nil, utils.ErrUnauthorized
 	}
+	slog.Info("user logged in", "user_id", user.ID)
 
 	pair, err := auth.GenerateTokenPair(user.ID)
 	if err != nil {
