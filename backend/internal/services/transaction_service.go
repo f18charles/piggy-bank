@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/models"
@@ -70,12 +71,14 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 
 	err := ts.txRepo.Db.Transaction(func(dbTx *gorm.DB) error {
 		if err := dbTx.Create(tx).Error; err != nil {
+			slog.Error("tx create: insert failed", "user_id", user_id, "error", err)
 			return err
 		}
 
 		// Update account balance
 		var account models.Account
 		if err := ts.txRepo.Db.First(&account, "id = ?", req.AccountID).Error; err != nil {
+			slog.Error("tx create: account lookup failed", "account_id", req.AccountID, "error", err)
 			return err
 		}
 		if req.Type == "income" {
@@ -84,6 +87,7 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 			account.Balance -= req.Amount
 		}
 		if err := dbTx.Save(&account).Error; err != nil {
+			slog.Error("tx create: account update failed", "account_id", req.AccountID, "error", err)
 			return err
 		}
 
@@ -96,6 +100,8 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 	if err != nil {
 		return nil, err
 	}
+
+	slog.Info("transaction created", "tx_id", tx.ID, "user_id", user_id, "amount", req.Amount, "type", req.Type)
 
 	return ts.txRepo.GetTransactionByID(tx.ID)
 }
