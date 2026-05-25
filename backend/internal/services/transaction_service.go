@@ -81,13 +81,18 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 			slog.Error("tx create: account lookup failed", "account_id", req.AccountID, "error", err)
 			return err
 		}
+
 		if req.Type == "income" {
 			account.Balance += req.Amount
 		} else {
 			account.Balance -= req.Amount
 		}
+
 		if err := dbTx.Save(&account).Error; err != nil {
-			slog.Error("tx create: account update failed", "account_id", req.AccountID, "error", err)
+			slog.Error("TxCreate: balance update failed",
+            "account_id", req.AccountID,
+            "new_balance", account.Balance,
+            "error", err)
 			return err
 		}
 
