@@ -1,4 +1,4 @@
-const StatCard = ({label, value, accent}) => {
+const StatCard = ({label, value, accent="text-green-700"}) => {
     return (
         <div className="rounded-lg border p-4">
             <p className="text-sm text-slate-500">{label}</p>
