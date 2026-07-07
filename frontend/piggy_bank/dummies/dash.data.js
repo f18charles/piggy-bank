@@ -1,0 +1,94 @@
+const DashData = {
+    netWorth: {
+        totalAssets: 245000,
+        totalLiabilities: 82000,
+        netWorth: 163000,
+        changePercentage: 2.4,
+        currency: "USD"
+    },
+
+    monthlyBurn: {
+        averageMonthlySpend: 4850,
+        monthlyIncome: 7200,
+        burnRate: 67.36,
+        projectedRunway: 33.6,
+        currency: "USD"
+    },
+
+    accounts: [
+        {
+        id: "acc_001",
+        name: "Chase Checking",
+        type: "checking",
+        balance: 12450.75,
+        currency: "USD"
+        },
+        {
+        id: "acc_002",
+        name: "Vanguard Roth IRA",
+        type: "investment",
+        balance: 87650.30,
+        currency: "USD"
+        },
+        {
+        id: "acc_003",
+        name: "Amex Platinum",
+        type: "credit",
+        balance: -3240.50,
+        currency: "USD"
+        }
+    ],
+
+    budgetHealth: [
+        {
+        categoryName: "Housing",
+        spent: 1850.00,
+        budget: 2000.00,
+        percentage: 92.5,
+        color: "#4CAF50"
+        },
+        {
+        categoryName: "Groceries",
+        spent: 420.30,
+        budget: 600.00,
+        percentage: 70.05,
+        color: "#2196F3"
+        },
+        {
+        categoryName: "Entertainment",
+        spent: 280.45,
+        budget: 300.00,
+        percentage: 93.48,
+        color: "#FF9800"
+        }
+    ],
+    
+    goalsProgress: [
+        {
+        id: "goal_001",
+        name: "Emergency Fund",
+        targetAmount: 30000,
+        currentAmount: 15000,
+        percentage: 50,
+        deadline: "2026-12-31"
+        },
+        {
+        id: "goal_002",
+        name: "Down Payment",
+        targetAmount: 60000,
+        currentAmount: 42000,
+        percentage: 70,
+        deadline: "2027-06-30"
+        },
+        {
+        id: "goal_003",
+        name: "Vacation Fund",
+        targetAmount: 5000,
+        currentAmount: 1750,
+        percentage: 35,
+        deadline: "2026-09-15"
+        }
+    ]
+}
+
+export default DashData
