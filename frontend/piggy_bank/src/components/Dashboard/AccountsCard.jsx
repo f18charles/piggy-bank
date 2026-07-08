@@ -6,7 +6,7 @@ const AccountsCard = ({data}) => {
         <div>
         <h2>Accounts</h2>
         {data.map((item) => (
-            <AccountItemCard account={item} />
+            <AccountItemCard key={item.id} account={item} />
         ))}
         </div>
     )
