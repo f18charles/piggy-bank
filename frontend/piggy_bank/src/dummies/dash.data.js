@@ -56,9 +56,9 @@ const DashData = {
         },
         {
         categoryName: "Entertainment",
-        spent: 280.45,
+        spent: 20.00,
         budget: 300.00,
-        percentage: 93.48,
+        percentage: 7,
         color: "#FF9800"
         }
     ],
@@ -68,8 +68,8 @@ const DashData = {
         id: "goal_001",
         name: "Emergency Fund",
         targetAmount: 30000,
-        currentAmount: 15000,
-        percentage: 50,
+        currentAmount: 27000,
+        percentage: 90,
         deadline: "2026-12-31"
         },
         {
@@ -84,8 +84,8 @@ const DashData = {
         id: "goal_003",
         name: "Vacation Fund",
         targetAmount: 5000,
-        currentAmount: 1750,
-        percentage: 35,
+        currentAmount: 1000,
+        percentage: 20,
         deadline: "2026-09-15"
         }
     ]

@@ -18,7 +18,7 @@ const GoalItemCard = ({goal}) => {
                         <div 
                             className={`h-2 rounded-full transition-all duration-500 ${
                                 goal.percentage > 85 ? 'bg-emerald-500' : 
-                                goal.percentage <= 70 ? 'bg-amber-500' : 
+                                goal.percentage >= 40 ? 'bg-amber-500' : 
                                 'bg-rose-500'
                             }`}
                             style={{ width: `${Math.min(goal.percentage, 100)}%` }}

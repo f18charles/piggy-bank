@@ -1,5 +1,5 @@
 import StatCard from "../components/Cards/StatCard";
-import DashData from "../../dummies/dash.data";
+import DashData from "../dummies/dash.data";
 import NetworthCard from "../components/Dashboard/NetWorthCard";
 import MonthlyBurnCard from "../components/Dashboard/MonthlyBurnCard";
 import { AccountsCard, BudgetOverviewCard, GoalsCard } from "../components/Dashboard";

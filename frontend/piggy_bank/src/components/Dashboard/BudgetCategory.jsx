@@ -18,7 +18,7 @@ const BudgetCategoryCard = ({budget}) => {
                         <div 
                             className={`h-2 rounded-full transition-all duration-500 ${
                                 budget.percentage > 85 ? 'bg-rose-500' : 
-                                budget.percentage > 70 ? 'bg-amber-500' : 
+                                budget.percentage > 60 ? 'bg-amber-500' : 
                                 'bg-emerald-500'
                             }`}
                             style={{ width: `${Math.min(budget.percentage, 100)}%` }}
