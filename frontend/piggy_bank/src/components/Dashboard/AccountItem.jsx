@@ -30,7 +30,7 @@ const AccountItemCard = ({account}) => {
     };
 
     return (
-        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all duration-200">
+        <div className="bg-gray-50 rounded-xl p-4 border border-purple-300 border-t-4 hover:border-emerald-200 hover:shadow-sm transition-all duration-200">
             <div className="flex items-start justify-between mb-2">
                 <p className="text-sm font-semibold text-gray-800 truncate">
                     {account.name}

@@ -2,13 +2,33 @@ import { useState } from "react"
 
 const GoalItemCard = ({goal}) => {
     return (
-        <div className="rounded-lg my-2 border p-4">   
-            <p className={"text-sm text-slate-500"}>{goal.name}</p> 
-            <p className={"text-sm text-slate-500"}>Target: {goal.targetAmount}</p>
-            <p className={`text-md font-semibold`}>Current: {goal.currentAmount}</p>
-            <p className={`text-md font-semibold`}>Percentage: {goal.percentage}</p>
-            <p className={`text-md font-semibold`}>Deadline: {goal.deadline}</p>
-        </div>
+        <>
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all">   
+                <div className="flex justify-between">
+                    <p className={"text-md"}>{goal.name}</p> 
+                    <span className="text-md">{goal.percentage}%</span>
+                </div>
+
+                {/* Burn Rate Progress Bar */}
+                <div className="mt-2">
+                    <div className="text-right text-sm text-gray-500 mb-1">
+                        <span>{goal.currentAmount} / {goal.targetAmount}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div 
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                                goal.percentage > 85 ? 'bg-emerald-500' : 
+                                goal.percentage <= 70 ? 'bg-amber-500' : 
+                                'bg-rose-500'
+                            }`}
+                            style={{ width: `${Math.min(goal.percentage, 100)}%` }}
+                        ></div>
+                    </div>
+                </div>
+                <p className={`text-xs mt-2`}>{goal.deadline}</p>
+            </div>
+        </>
+        
     )
 }
 
