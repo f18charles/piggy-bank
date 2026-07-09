@@ -4,6 +4,38 @@ const getAccessToken = () => {
     return localStorage.getItem("accessToken")
 }
 
+const getRefreshToken = () => {
+    return localStorage.getItem("refreshToken")
+}
+
+const clearStoredSession = () => {
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("refreshToken")
+    localStorage.removeItem("user")
+}
+
+const refreshAccessToken = async () => {
+    const refreshToken = getRefreshToken()
+    if (!refreshToken) {
+        throw new Error("No refresh token available")
+    }
+
+    const res = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken })
+    })
+
+    const json = await res.json().catch(() => null)
+
+    if (!res.ok) {
+        throw new Error("Failed to refresh access token")
+    }
+
+    localStorage.setItem("accessToken", json.data.access_token)
+    localStorage.setItem("refreshToken", json.data.refresh_token)
+}
+
 const request = async (path, { method = "GET", body, auth = true } = {}) => {
     const headers = { "Content-Type": "application/json" }
 
@@ -15,6 +47,15 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
     }
 
     const res = await fetch(`${BASE_URL}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
+
+    if (res.status === 401 && auth && !skipRefresh) {
+        try {
+            await refreshAccessToken()
+            return request(path, { method, body, auth, skipRefresh: true })
+        } catch {
+            clearStoredSession()
+        }
+    }
 
     const json = await res.json().catch(() => null)
 
