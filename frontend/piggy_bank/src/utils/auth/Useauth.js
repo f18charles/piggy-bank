@@ -9,3 +9,5 @@ const useAuth = () => {
     }
     return context;
 }
+
+export default useAuth;
