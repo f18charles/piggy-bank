@@ -8,7 +8,7 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
     const headers = { "Content-Type": "application/json" }
 
     if (auth) {
-        const token = getAccessToken
+        const token = getAccessToken()
         if (token) {
             headers.Authorization = `Bearer ${token}`
         }
@@ -32,11 +32,11 @@ const apiGet = (path, options) => {
     return request(path, {...options, method: "GET"})
 }
 
-const apiPost = (path, options) => {
+const apiPost = (path, body, options) => {
     return request(path, {...options, method: "POST", body})
 }
 
-const apiPatch = (path, options) => {
+const apiPatch = (path, body, options) => {
     return request(path, {...options, method: "PATCH", body})
 }
 
@@ -44,4 +44,4 @@ const apiDelete = (path, options) => {
     return request(path, {...options, method: "DELETE"})
 }
 
-export default (apiGet, apiPost, apiPatch, apiDelete)
+export { apiGet, apiPost, apiPatch, apiDelete }
