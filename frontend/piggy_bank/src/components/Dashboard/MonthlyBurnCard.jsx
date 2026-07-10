@@ -13,15 +13,15 @@ const MonthlyBurnCard = ({data}) => {
 
     // Get status color based on burn rate
     const getBurnStatusColor = () => {
-        if (data.burnRate > 85) return 'text-rose-600 bg-rose-50';
-        if (data.burnRate > 70) return 'text-amber-600 bg-amber-50';
+        if (data.burn_rate > 85) return 'text-rose-600 bg-rose-50';
+        if (data.burn_rate > 70) return 'text-amber-600 bg-amber-50';
         return 'text-emerald-600 bg-emerald-50';
     };
 
     // Get spend color
     const getSpendColor = () => {
-        if (data.averageMonthlySpend > data.monthlyIncome) return 'text-rose-600';
-        if (data.averageMonthlySpend > data.monthlyIncome * 0.8) return 'text-amber-600';
+        if (data.average_monthly_spend > data.monthly_income) return 'text-rose-600';
+        if (data.average_monthly_spend > data.monthly_income * 0.8) return 'text-amber-600';
         return 'text-emerald-600';
     };
 
@@ -33,26 +33,26 @@ const MonthlyBurnCard = ({data}) => {
                         Monthly Burn
                     </p>
                     <p className="text-2xl font-bold text-gray-800 mt-1">
-                        {formatCurrency(data.averageMonthlySpend)}
+                        {formatCurrency(data.average_monthly_spend)}
                     </p>
                     <div className="flex items-center gap-3 mt-2">
                         <span className={`text-xs px-2 py-1 rounded ${getBurnStatusColor()}`}>
-                            {data.burnRate}% burn rate
+                            {data.burn_rate}% burn rate
                         </span>
                     </div>
                 </div>
                 <div className="text-right">
                     <p className="text-xs text-emerald-600">Income</p>
                     <p className="text-md font-semibold text-emerald-700">
-                        {formatCurrency(data.monthlyIncome)}
+                        {formatCurrency(data.monthly_income)}
                     </p>
                     <p className="text-xs text-rose-500 mt-1">Runway</p>
                     <p className={`text-md font-semibold ${
-                        data.projectedRunway > 24 ? 'text-emerald-600' : 
-                        data.projectedRunway > 12 ? 'text-amber-600' : 
+                        data.projected_runway > 24 ? 'text-emerald-600' : 
+                        data.projected_runway > 12 ? 'text-amber-600' : 
                         'text-rose-600'
                     }`}>
-                        {data.projectedRunway} months
+                        {data.projected_runway} months
                     </p>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -17,6 +18,7 @@ type OverviewService struct {
 	accountsRepo repository.AccountRepo
 	budgetsRepo  repository.BudgetRepo
 	goalsRepo    repository.GoalRepo
+	userRepo     repository.UserRepository
 }
 
 func NewOverviewService(db *gorm.DB) *OverviewService {
@@ -26,6 +28,7 @@ func NewOverviewService(db *gorm.DB) *OverviewService {
 		accountsRepo: *repository.NewAccountRepo(db),
 		budgetsRepo:  *repository.NewBudgetRepo(db),
 		goalsRepo:    *repository.NewGoalRepo(db),
+		userRepo:     *repository.NewUserRepository(db),
 	}
 }
 
@@ -34,14 +37,33 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 		QuickInsights: []string{},
 	}
 
-	// get all accounts and networth
+	// user's currency preference -- used to label both net worth and
+	// monthly burn figures. Single-currency assumption for now: if a user
+	// has accounts in multiple currencies, this doesn't convert between
+	// them, it just labels everything with the user's preferred currency.
+	user, err := os.userRepo.GetUserByID(user_id)
+	if err != nil {
+		return nil, utils.ErrNotFound
+	}
+
+	// get all accounts and net worth
 	accounts, err := os.accountsRepo.ListAccountByUser(user_id)
 	if err != nil {
 		return nil, utils.ErrNotFound
 	}
 
+	var totalAssets, totalLiabilities float64
+	// NOTE: "credit" accounts are treated as liabilities, everything else
+	// (checking/savings/investment) as assets. This is a simplification --
+	// a proper AccountType classification (is this account a liability?)
+	// is a good candidate for the model hooks planned later.
 	for _, acc := range accounts {
-		over_view.NetWorth += acc.Balance
+		if acc.Type == "credit" {
+			totalLiabilities += math.Abs(acc.Balance)
+		} else {
+			totalAssets += acc.Balance
+		}
+
 		over_view.Accounts = append(over_view.Accounts, overview.AccountBrief{
 			ID:       acc.ID,
 			Name:     acc.Name,
@@ -49,6 +71,14 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 			Balance:  acc.Balance,
 			Currency: acc.Currency,
 		})
+	}
+
+	over_view.NetWorth = overview.NetWorthBrief{
+		NetWorth:         totalAssets - totalLiabilities,
+		Currency:         user.Currency,
+		ChangePercentage: 0, // TODO: needs a stored net worth history, see NetWorthBrief comment
+		TotalAssets:      totalAssets,
+		TotalLiabilities: totalLiabilities,
 	}
 
 	// calculate monthly burn
@@ -60,7 +90,28 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 		return nil, utils.ErrNotFound
 	}
 
-	over_view.MonthlyBurn = monthly_expenses
+	monthly_income, err := os.overviewRepo.GetMonthlyIncome(user_id, startOfMonth)
+	if err != nil {
+		return nil, utils.ErrNotFound
+	}
+
+	var burnRate float64
+	if monthly_income > 0 {
+		burnRate = (monthly_expenses / monthly_income) * 100
+	}
+
+	var projectedRunway float64
+	if monthly_expenses > 0 {
+		projectedRunway = totalAssets / monthly_expenses
+	}
+
+	over_view.MonthlyBurn = overview.MonthlyBurnBrief{
+		Currency:            user.Currency,
+		BurnRate:            burnRate,
+		AverageMonthlySpend: monthly_expenses,
+		MonthlyIncome:       monthly_income,
+		ProjectedRunway:     projectedRunway,
+	}
 
 	// get budget health
 	budgets, err := os.budgetsRepo.ListBudgetsByUser(user_id)

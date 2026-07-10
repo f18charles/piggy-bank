@@ -5,8 +5,8 @@ const BudgetCategoryCard = ({budget}) => {
         <>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all ">
                 <div className="flex justify-between">
-                    <p className={"text-md"} style={{color:budget.color}} >{budget.categoryName}</p> 
-                    <span className="text-md">{budget.percentage}%</span>
+                    <p className={"text-md"} style={{color:budget.color}} >{budget.category_name}</p> 
+                    <span className="text-md">{budget.percentage.toFixed(1)}%</span>
                 </div>
             
                 {/* Burn Rate Progress Bar */}

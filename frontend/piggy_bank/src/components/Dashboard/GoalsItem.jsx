@@ -6,13 +6,13 @@ const GoalItemCard = ({goal}) => {
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all">   
                 <div className="flex justify-between">
                     <p className={"text-md"}>{goal.name}</p> 
-                    <span className="text-md">{goal.percentage}%</span>
+                    <span className="text-md">{goal.percentage.toFixed(1)}%</span>
                 </div>
 
                 {/* Burn Rate Progress Bar */}
                 <div className="mt-2">
                     <div className="text-right text-sm text-gray-500 mb-1">
-                        <span>{goal.currentAmount} / {goal.targetAmount}</span>
+                        <span>{goal.current_amount} / {goal.target_amount}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                         <div 
