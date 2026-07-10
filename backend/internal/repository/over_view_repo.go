@@ -27,6 +27,14 @@ func (or *OverviewRepo) GetMonthlyExpenses(user_id uuid.UUID, startOfMonth time.
 	return monthly_expenses, nil
 }
 
+func (or *OverviewRepo) GetMonthlyIncome(user_id uuid.UUID, startOfMonth time.Time) (float64, error) {
+	var monthly_income float64
+	if err := or.db.Model(&models.Transaction{}).Where("user_id = ? and type = ? and transaction_date >= ?", user_id, "income", startOfMonth).Select("COALESCE(SUM(amount), 0)").Scan(&monthly_income).Error; err != nil {
+		return 0, err
+	}
+	return monthly_income, nil
+}
+
 func (or *OverviewRepo) GetLatestTransactions(user_id uuid.UUID, dash_overview *overview.DashboardOverview) error {
 	return or.db.Where("user_id = ?", user_id).
 		Order("transaction_date DESC").

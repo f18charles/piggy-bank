@@ -8,13 +8,32 @@ import (
 )
 
 type DashboardOverview struct {
-	NetWorth      float64              `json:"net_worth"`
-	MonthlyBurn   float64              `json:"monthly_burn"`
+	NetWorth      NetWorthBrief        `json:"net_worth"`
+	MonthlyBurn   MonthlyBurnBrief     `json:"monthly_burn"`
 	Accounts      []AccountBrief       `json:"accounts"`
 	BudgetHealth  []BugdetBrief        `json:"budget_health"`
 	GoalsProgress []GoalBrief          `json:"goals_progress"`
 	RecentTx      []models.Transaction `json:"recent_transactions"`
 	QuickInsights []string             `json:"quick_insights"`
+}
+
+type NetWorthBrief struct {
+	NetWorth float64 `json:"net_worth"`
+	Currency string  `json:"currency"`
+	// TODO: computing a real month-over-month change needs a stored net
+	// worth history/snapshot (planned as a future model hook). Stubbed at
+	// 0 until that exists.
+	ChangePercentage float64 `json:"change_percentage"`
+	TotalAssets      float64 `json:"total_assets"`
+	TotalLiabilities float64 `json:"total_liabilities"`
+}
+
+type MonthlyBurnBrief struct {
+	Currency            string  `json:"currency"`
+	BurnRate            float64 `json:"burn_rate"`
+	AverageMonthlySpend float64 `json:"average_monthly_spend"`
+	MonthlyIncome       float64 `json:"monthly_income"`
+	ProjectedRunway     float64 `json:"projected_runway"`
 }
 
 type AccountBrief struct {
