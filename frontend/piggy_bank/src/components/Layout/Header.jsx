@@ -1,10 +1,23 @@
 import brand from "../../assets/piggybank.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdDashboard } from "react-icons/md";
 import { useState } from 'react';
+import useAuth from '../../utils/auth/Useauth';
 
 const Header = () => {
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        try {
+            await logout();
+            navigate("/login");
+        } finally {
+            setIsLoggingOut(false);
+        }
+    };
 
     return (
         <header className="w-full bg-white/95 backdrop-blur-sm border-b border-emerald-100/50 shadow-sm sticky top-0 z-50">
@@ -34,7 +47,7 @@ const Header = () => {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-medium shadow-sm">
                             JD
                         </div>
-                        <div className="hidden md:block">
+                        <div className="hidden md:block" onClick={handleLogout}>
                             <p className="text-xs font-medium text-gray-700">John Doe</p>
                             <p className="text-xs text-gray-400">Premium</p>
                         </div>
