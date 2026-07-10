@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
     const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem("refreshToken"))
     const [user, setUser] = useState(readStoredUser)
 
-    const persistSession = ({accessToken, refreshToken, user}) => {
+    const persistSession = ({access_token: accessToken, refresh_token: refreshToken, user}) => {
         localStorage.setItem("accessToken", accessToken)
         localStorage.setItem("refreshToken", refreshToken)
         localStorage.setItem("user", JSON.stringify(user))
