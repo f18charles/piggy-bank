@@ -11,7 +11,7 @@ const BudgetOverviewCard = ({data}) => {
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                     {data.map((item) => (
-                        <BudgetCategoryCard key={item.categoryName} budget={item} />
+                        <BudgetCategoryCard key={item.category_name} budget={item} />
                     ))}
                 </div>                
             </div>

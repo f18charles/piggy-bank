@@ -69,20 +69,19 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
     return json?.data
 }
 
-const apiGet = (path, options) => {
+export const ApiGet = (path, options) => {
     return request(path, {...options, method: "GET"})
 }
 
-const apiPost = (path, body, options) => {
+export const apiPost = (path, body, options) => {
     return request(path, {...options, method: "POST", body})
 }
 
-const apiPatch = (path, body, options) => {
+export const apiPatch = (path, body, options) => {
     return request(path, {...options, method: "PATCH", body})
 }
 
-const apiDelete = (path, options) => {
+export const apiDelete = (path, options) => {
     return request(path, {...options, method: "DELETE"})
 }
-
-export { apiGet, apiPost, apiPatch, apiDelete }
+ 
