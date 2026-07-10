@@ -1,6 +1,6 @@
 import brand from "../../assets/piggybank.png";
 import { Link, useNavigate } from 'react-router-dom';
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdLogout } from "react-icons/md";
 import { useState } from 'react';
 import useAuth from '../../utils/auth/Useauth';
 
@@ -8,6 +8,10 @@ const Header = () => {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    const initials = user?.full_name ?
+    user.full_name.trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase()
+    : "?"
 
     const handleLogout = async () => {
         setIsLoggingOut(true);
@@ -45,13 +49,22 @@ const Header = () => {
                     {/* User Avatar */}
                     <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-medium shadow-sm">
-                            JD
+                            {initials}
                         </div>
-                        <div className="hidden md:block" onClick={handleLogout}>
-                            <p className="text-xs font-medium text-gray-700">John Doe</p>
-                            <p className="text-xs text-gray-400">Premium</p>
+                        <div className="hidden md:block">
+                            <p className="text-xs font-medium text-gray-700">{user?.full_name}</p>
+                            <p className="text-xs text-gray-400">{user?.email}</p>
                         </div>
+                        
                     </div>
+                    <button
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        title="Log out"
+                        className="p-2 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <MdLogout className="w-5 h-5" />
+                    </button>
                 </div>
             </nav>
         </header>
