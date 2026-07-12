@@ -28,6 +28,18 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	})
 	require.NoError(t, err, "failed to open in-memory test database")
 
+	// SQLite's :memory: mode gives *each connection* its own separate,
+	// blank database -- it isn't one shared database. Go's database/sql
+	// pools connections and may hand out more than one, so without this,
+	// AutoMigrate below can create tables on one connection while a later
+	// query in the same test runs against a different, table-less one,
+	// producing intermittent "no such table" errors. Capping the pool at
+	// exactly one connection guarantees everything in a test shares the
+	// same actual database.
+	sqlDB, err := db.DB()
+	require.NoError(t, err, "failed to get underlying sql.DB")
+	sqlDB.SetMaxOpenConns(1)
+
 	// Register BeforeCreate hooks so UUIDs are generated in SQLite.
 	// uuid_generate_v4() is PostgreSQL-only and does not run in SQLite,
 	// so without this hook all IDs stay as zero UUIDs and FK constraints fail.
