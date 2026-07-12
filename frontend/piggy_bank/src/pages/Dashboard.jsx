@@ -1,7 +1,7 @@
 import NetworthCard from "../components/Dashboard/NetWorthCard";
 import MonthlyBurnCard from "../components/Dashboard/MonthlyBurnCard";
 import { AccountsCard, BudgetOverviewCard, GoalsCard } from "../components/Dashboard";
-import { ApiGet } from "../utils/Client";
+import { apiGet } from "../utils/Client";
 import { useEffect, useState } from "react";
 
 const Dashboard = () => {
@@ -14,7 +14,7 @@ const Dashboard = () => {
 
         const loadOverview = async () => {
             try {
-                const data = await ApiGet("/insights/overview")
+                const data = await apiGet("/insights/overview")
                 if (!ignore) setOverview(data)
             } catch (err) {
                 if (!ignore) setError(err.message)

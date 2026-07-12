@@ -69,7 +69,7 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
     return json?.data
 }
 
-export const ApiGet = (path, options) => {
+export const apiGet = (path, options) => {
     return request(path, {...options, method: "GET"})
 }
 
