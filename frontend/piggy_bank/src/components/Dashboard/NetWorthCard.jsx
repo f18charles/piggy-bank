@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 const NetworthCard = ({data}) => {
     return (
         <div className="bg-white rounded-2xl border-l-4 border-emerald-500 shadow-sm p-6 hover:shadow-md transition-shadow">

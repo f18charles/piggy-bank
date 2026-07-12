@@ -1,4 +1,3 @@
-import { useState } from "react"
 import AccountItemCard from "./AccountItem";
 
 const AccountsCard = ({data}) => {

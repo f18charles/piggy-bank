@@ -46,8 +46,9 @@ const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await apiPost("/auth/logout")
-        } catch {
-
+        } catch (err) {
+            // Log and ignore logout errors
+            console.warn("Logout request failed:", err)
         }
         clearSession()
     }

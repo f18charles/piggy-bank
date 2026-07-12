@@ -1,5 +1,5 @@
 import Layout from './components/Layout/Layout'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import './styles/App.css'
 import ProtectedRoute from './utils/auth/Protectedroute'

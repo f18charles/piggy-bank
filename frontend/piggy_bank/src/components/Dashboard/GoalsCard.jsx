@@ -1,4 +1,3 @@
-import { useState } from "react"
 import GoalItemCard from "./GoalsItem";
 
 const GoalsCard = ({data}) => {

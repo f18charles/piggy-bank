@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 const MonthlyBurnCard = ({data}) => {
     // Format currency helper
     const formatCurrency = (amount) => {

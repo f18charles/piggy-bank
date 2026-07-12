@@ -36,7 +36,7 @@ const refreshAccessToken = async () => {
     localStorage.setItem("refreshToken", json.data.refresh_token)
 }
 
-const request = async (path, { method = "GET", body, auth = true } = {}) => {
+const request = async (path, { method = "GET", body, auth = true, skipRefresh = false } = {}) => {
     const headers = { "Content-Type": "application/json" }
 
     if (auth) {
@@ -84,4 +84,3 @@ export const apiPatch = (path, body, options) => {
 export const apiDelete = (path, options) => {
     return request(path, {...options, method: "DELETE"})
 }
- 

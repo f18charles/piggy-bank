@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 const GoalItemCard = ({goal}) => {
     return (
         <>
@@ -33,10 +31,3 @@ const GoalItemCard = ({goal}) => {
 }
 
 export default GoalItemCard;
-
-// id: "goal_001",
-// name: "Emergency Fund",
-// targetAmount: 30000,
-// currentAmount: 15000,
-// percentage: 50,
-// deadline: "2026-12-31"
