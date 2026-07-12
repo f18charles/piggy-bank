@@ -24,7 +24,7 @@ func NewTxService(db *gorm.DB) *TxService {
 }
 
 var validTxTypes = map[string]bool{
-	"income":  true,
+	"income":   true,
 	"expense": true,
 }
 
@@ -47,7 +47,7 @@ type TxUpdateRequest struct {
 // TxCreate creates a new transaction record for a user and saves it via the repository.
 func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.Transaction, error) {
 	if !validTxTypes[req.Type] {
-		return nil, errors.New("Type can only be income or expense")
+		return nil, errors.New("type can only be income or expense")
 	}
 
 	tx := &models.Transaction{
@@ -90,9 +90,9 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 
 		if err := dbTx.Save(&account).Error; err != nil {
 			slog.Error("TxCreate: balance update failed",
-				"account_id", req.AccountID,
-				"new_balance", account.Balance,
-				"error", err)
+            "account_id", req.AccountID,
+            "new_balance", account.Balance,
+            "error", err)
 			return err
 		}
 
