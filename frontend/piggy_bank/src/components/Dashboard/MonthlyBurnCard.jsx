@@ -18,13 +18,6 @@ const MonthlyBurnCard = ({data}) => {
         return 'text-emerald-600 bg-emerald-50';
     };
 
-    // Get spend color
-    const getSpendColor = () => {
-        if (data.average_monthly_spend > data.monthly_income) return 'text-rose-600';
-        if (data.average_monthly_spend > data.monthly_income * 0.8) return 'text-amber-600';
-        return 'text-emerald-600';
-    };
-
     return (
         <div className="bg-white rounded-2xl border-l-4 border-emerald-500 shadow-sm p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
