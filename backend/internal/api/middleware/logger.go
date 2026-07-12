@@ -16,13 +16,13 @@ func Logger() gin.HandlerFunc {
 
 		c.Next()
 
-		user_id,_ := c.Get("user_id")
+		user_id, _ := c.Get("user_id")
 		slog.Info("request",
 			"method", c.Request.Method,
 			"path", path,
 			"status", c.Writer.Status(),
 			"duration", time.Since(start),
-			"user_id", user_id,	
+			"user_id", user_id,
 		)
 	}
 }

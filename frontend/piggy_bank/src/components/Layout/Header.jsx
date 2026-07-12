@@ -1,6 +1,6 @@
 import brand from "../../assets/piggybank.png";
 import { Link, useNavigate } from 'react-router-dom';
-import { MdDashboard, MdLogout } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import { useState } from 'react';
 import useAuth from '../../utils/auth/Useauth';
 

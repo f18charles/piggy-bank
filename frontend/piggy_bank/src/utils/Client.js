@@ -48,7 +48,7 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
 
     const res = await fetch(`${BASE_URL}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
 
-    if (res.status === 401 && auth && !skipRefresh) {
+    if (res.status === 401 && auth && !body?.skipRefresh) {
         try {
             await refreshAccessToken()
             return request(path, { method, body, auth, skipRefresh: true })

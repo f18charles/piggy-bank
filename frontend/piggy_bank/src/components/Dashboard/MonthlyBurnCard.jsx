@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 const MonthlyBurnCard = ({data}) => {
     // Format currency helper
     const formatCurrency = (amount) => {
@@ -16,13 +14,6 @@ const MonthlyBurnCard = ({data}) => {
         if (data.burn_rate > 85) return 'text-rose-600 bg-rose-50';
         if (data.burn_rate > 70) return 'text-amber-600 bg-amber-50';
         return 'text-emerald-600 bg-emerald-50';
-    };
-
-    // Get spend color
-    const getSpendColor = () => {
-        if (data.average_monthly_spend > data.monthly_income) return 'text-rose-600';
-        if (data.average_monthly_spend > data.monthly_income * 0.8) return 'text-amber-600';
-        return 'text-emerald-600';
     };
 
     return (

@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 const AccountItemCard = ({account}) => {
     // Get color based on account type
     const getTypeColor = () => {

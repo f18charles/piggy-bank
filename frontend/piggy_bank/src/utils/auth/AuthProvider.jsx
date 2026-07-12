@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
         try {
             await apiPost("/auth/logout")
         } catch {
-
+            // Ignore errors on logout
         }
         clearSession()
     }

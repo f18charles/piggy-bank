@@ -42,7 +42,7 @@ func Connect() {
 	// Reduced connection pool for free tier
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(5)
-	
+
 	DB = db
 
 	// After gorm.Open succeeds

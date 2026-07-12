@@ -1,4 +1,3 @@
-import { useState } from "react"
 import BudgetCategoryCard from "./BudgetCategory";
 
 const BudgetOverviewCard = ({data}) => {
