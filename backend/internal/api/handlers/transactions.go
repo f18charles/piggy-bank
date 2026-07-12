@@ -54,12 +54,12 @@ func (th *TransactionHandler) CreateTransactions(c *gin.Context) {
 	tx, err := th.transactionService.TxCreate(id, txreq)
 	if err != nil {
 		slog.Error("CreateTransactions failed",
-            "user_id", id,
-            "account_id", txreq.AccountID,
-            "amount", txreq.Amount,
-            "type", txreq.Type,
-            "error", err.Error(),
-        )
+			"user_id", id,
+			"account_id", txreq.AccountID,
+			"amount", txreq.Amount,
+			"type", txreq.Type,
+			"error", err.Error(),
+		)
 		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to create transaction")
 		return
 	}
