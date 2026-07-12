@@ -41,6 +41,7 @@ func TestTransactionCreate(t *testing.T) {
 	t.Run("creates income transaction", func(t *testing.T) {
 		incomeCat := seedCategory(t, db, user.ID, "Salary", "income")
 		req := services.TxCreateRequest{
+			AccountID:     acc.ID,
 			CategoryID:    &incomeCat.ID,
 			Amount:        50000.00,
 			Type:          "income",
@@ -57,6 +58,7 @@ func TestTransactionCreate(t *testing.T) {
 
 	t.Run("creates transaction without category", func(t *testing.T) {
 		req := services.TxCreateRequest{
+			AccountID:     acc.ID,
 			CategoryID:    nil,
 			Amount:        100.00,
 			Type:          "expense",
@@ -72,6 +74,7 @@ func TestTransactionCreate(t *testing.T) {
 
 	t.Run("user_id is set on the transaction", func(t *testing.T) {
 		req := services.TxCreateRequest{
+			AccountID:     acc.ID,
 			Amount:        50.00,
 			Type:          "expense",
 			Description:   "Test",
@@ -196,6 +199,7 @@ func seedTransaction(t *testing.T, db *gorm.DB, userID, accountID uuid.UUID, amo
 	t.Helper()
 	svc := services.NewTxService(db)
 	tx, err := svc.TxCreate(userID, services.TxCreateRequest{
+		AccountID:     accountID,
 		Amount:        amount,
 		Type:          txType,
 		Description:   "seed transaction",
@@ -204,4 +208,5 @@ func seedTransaction(t *testing.T, db *gorm.DB, userID, accountID uuid.UUID, amo
 	})
 	require.NoError(t, err)
 	return tx
+
 }

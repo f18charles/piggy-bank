@@ -24,7 +24,7 @@ func NewTxService(db *gorm.DB) *TxService {
 }
 
 var validTxTypes = map[string]bool{
-	"income":   true,
+	"income":  true,
 	"expense": true,
 }
 
@@ -90,9 +90,9 @@ func (ts *TxService) TxCreate(user_id uuid.UUID, req TxCreateRequest) (*models.T
 
 		if err := dbTx.Save(&account).Error; err != nil {
 			slog.Error("TxCreate: balance update failed",
-            "account_id", req.AccountID,
-            "new_balance", account.Balance,
-            "error", err)
+				"account_id", req.AccountID,
+				"new_balance", account.Balance,
+				"error", err)
 			return err
 		}
 
