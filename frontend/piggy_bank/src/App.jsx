@@ -5,6 +5,7 @@ import './styles/App.css'
 import ProtectedRoute from './utils/auth/Protectedroute'
 import Login from './pages/auth/Login'
 import Accounts from './pages/Accounts'
+import Budgets from './pages/Budgets'
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/" element={<Layout />} >
                     <Route index element={<Dashboard />} />
                     <Route path='/accounts' element={<Accounts />} />
+                    <Route path='/budget' element={<Budgets />} />
                 </Route>
             </Route>
             
