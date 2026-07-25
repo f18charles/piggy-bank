@@ -209,7 +209,7 @@ const Budgets = () => {
                     <div className="flex min-h-full items-center justify-center p-4">
                         {/* Backdrop */}
                         <div 
-                            className="fixed inset-0 bg-black opacity-50 transition-all duration-500"
+                            className="fixed inset-0 bg-black opacity-50 transition-all duration-100"
                             onClick={closeForm}
                         />
                         
