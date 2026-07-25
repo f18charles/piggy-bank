@@ -5,6 +5,7 @@ import BudgetForm from "../components/Budgets/BudgetForm"
 
 const Budgets = () => {
     const [budgets, setBudgets] = useState([])
+    const [categories, setCategories] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -31,8 +32,14 @@ const Budgets = () => {
 
         async function initialLoad() {
             try {
-                const data = await apiGet("/budgets")
-                if (!ignore) setBudgets(data)
+                const [budgetsData, categoriesData] = await Promise.all([
+                    apiGet("/budgets"),
+                    apiGet("/categories"),
+                ])
+                if (!ignore) {
+                    setBudgets(budgetsData)
+                    setCategories(categoriesData)
+                }
             } catch (err) {
                 if (!ignore) setError(err.message)
             } finally {
@@ -83,7 +90,7 @@ const Budgets = () => {
     }
 
     const handleDelete = async (budget) => {
-        if (!window.confirm(`Delete budget for "${budget.categoryId}"? This can't be undone.`)) {
+        if (!window.confirm(`Delete budget for "${budget.category?.name || 'this category'}"? This can't be undone.`)) {
             return
         }
         setDeletingId(budget.id)
@@ -202,7 +209,7 @@ const Budgets = () => {
                     <div className="flex min-h-full items-center justify-center p-4">
                         {/* Backdrop */}
                         <div 
-                            className="fixed inset-0 bg-black bg-opacity-25 transition-opacity"
+                            className="fixed inset-0 bg-black opacity-50 transition-all duration-500"
                             onClick={closeForm}
                         />
                         
@@ -210,6 +217,7 @@ const Budgets = () => {
                         <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full mx-auto">
                             <BudgetForm
                                 budget={editingBudget}
+                                categories={categories}
                                 onSubmit={handleSubmit}
                                 onCancel={closeForm}
                                 isSubmitting={isSubmitting}

@@ -2,25 +2,55 @@ import { useState } from "react"
 
 const PERIOD_TYPES = ['monthly', 'quarterly', 'yearly', 'custom']
 
-const BudgetForm = ({ budget, onSubmit, onCancel, isSubmitting }) => {
+// The backend doesn't auto-calculate an end date -- it just stores
+// whatever it's given. This is what actually makes the "(Auto-calculated)"
+// label true: compute a sensible end date ourselves before submitting,
+// for every period except "custom" (where the user picks one explicitly).
+function calculateEndDate(startDate, period) {
+    if (!startDate) return ''
+    const date = new Date(startDate)
+
+    if (period === 'monthly') date.setMonth(date.getMonth() + 1)
+    else if (period === 'quarterly') date.setMonth(date.getMonth() + 3)
+    else if (period === 'yearly') date.setFullYear(date.getFullYear() + 1)
+
+    return date.toISOString().slice(0, 10)
+}
+
+// Backend dates come back as full ISO datetimes (e.g. "2026-01-01T00:00:00Z"),
+// but <input type="date"> only accepts the YYYY-MM-DD portion -- feeding it
+// the full string makes the input silently show blank.
+function toDateInputValue(isoString) {
+    if (!isoString) return ''
+    return isoString.slice(0, 10)
+}
+
+const BudgetForm = ({ budget, categories, onSubmit, onCancel, isSubmitting }) => {
     const isEditing = Boolean(budget)
 
-    const [categoryId, setCategoryId] = useState(budget?.categoryId || '')
+    const [categoryId, setCategoryId] = useState(budget?.category_id || '')
     const [amount, setAmount] = useState(budget?.amount || 0)
-    const [spent, setSpent] = useState(budget?.spent || 0)
     const [period, setPeriod] = useState(budget?.period || PERIOD_TYPES[0])
-    const [startDate, setStartDate] = useState(budget?.startDate || '')
-    const [endDate, setEndDate] = useState(budget?.endDate || '')
+    const [startDate, setStartDate] = useState(toDateInputValue(budget?.start_date))
+    const [endDate, setEndDate] = useState(toDateInputValue(budget?.end_date))
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        const resolvedEndDate = period === 'custom'
+            ? endDate
+            : calculateEndDate(startDate, period)
+
+        // Deliberately no "spent" here -- it's a running total the backend
+        // updates automatically as transactions come in, not something
+        // this form should ever be able to overwrite. A new budget starts
+        // at 0 (the model's own default); editing one shouldn't touch it.
         const payload = {
-            categoryId,
+            category_id: categoryId,
             amount: Number(amount),
-            spent: Number(spent),
             period,
-            startDate,
-            endDate: period === 'custom' ? endDate : undefined
+            start_date: startDate,
+            end_date: resolvedEndDate,
         }
         onSubmit(payload)
     }
@@ -30,56 +60,49 @@ const BudgetForm = ({ budget, onSubmit, onCancel, isSubmitting }) => {
             <h2 className="text-lg font-semibold text-gray-800">
                 {isEditing ? 'Edit Budget' : 'Add New Budget'}
             </h2>
-            
+
             <div>
                 <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
-                    Category ID
+                    Category
                 </label>
-                <input
-                    type="text"
+                <select
                     id="categoryId"
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
                     required
-                    placeholder="e.g., GROC-001"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+                >
+                    <option value="" disabled>Select a category</option>
+                    {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
+                    ))}
+                </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-                        Budget Amount
-                    </label>
-                    <input
-                        type="number"
-                        id="amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        required
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
+            {isEditing && (
+                <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500">
+                    Spent so far: <span className="font-medium text-gray-700">{budget.spent}</span>
+                    {' '}-- updates automatically as transactions come in, not editable here.
                 </div>
+            )}
 
-                <div>
-                    <label htmlFor="spent" className="block text-sm font-medium text-gray-700 mb-1">
-                        Spent
-                    </label>
-                    <input
-                        type="number"
-                        id="spent"
-                        value={spent}
-                        onChange={(e) => setSpent(e.target.value)}
-                        required
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                </div>
+            <div>
+                <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+                    Budget Amount
+                </label>
+                <input
+                    type="number"
+                    id="amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
             </div>
 
             <div>
@@ -123,7 +146,7 @@ const BudgetForm = ({ budget, onSubmit, onCancel, isSubmitting }) => {
                     <input
                         type="date"
                         id="endDate"
-                        value={endDate}
+                        value={period === 'custom' ? endDate : calculateEndDate(startDate, period)}
                         onChange={(e) => setEndDate(e.target.value)}
                         required={period === 'custom'}
                         disabled={period !== 'custom'}

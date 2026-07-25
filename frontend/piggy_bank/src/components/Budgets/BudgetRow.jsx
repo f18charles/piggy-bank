@@ -38,13 +38,14 @@ const formatDate = (dateString) => {
 
 const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
     const [showDetails, setShowDetails] = useState(false)
-    
-    const spentPercentage = budget.amount > 0 
+
+    const spentPercentage = budget.amount > 0
         ? Math.min((budget.spent / budget.amount) * 100, 100)
         : 0
 
     const remaining = budget.amount - budget.spent
     const isOverBudget = remaining < 0
+    const categoryName = budget.category?.name || 'Uncategorized'
 
     return (
         <div className="bg-white rounded-xl border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all">
@@ -55,8 +56,11 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
                     </span>
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
-                            <p className="text-sm font-semibold text-gray-800">
-                                {budget.categoryId}
+                            <p
+                                className="text-sm font-semibold text-gray-800"
+                                style={budget.category?.color ? { color: budget.category.color } : undefined}
+                            >
+                                {categoryName}
                             </p>
                             <span className="text-xs text-gray-400">•</span>
                             <div className="flex items-center gap-2">
@@ -66,7 +70,7 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
                                 <span className="text-xs text-gray-400">budget</span>
                             </div>
                         </div>
-                        
+
                         {/* Progress bar */}
                         <div className="mt-2">
                             <div className="flex justify-between text-xs text-gray-500 mb-0.5">
@@ -90,7 +94,7 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
                         </p>
                         <p className="text-xs text-gray-400">remaining</p>
                     </div>
-                    
+
                     <button 
                         onClick={() => setShowDetails(!showDetails)}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -133,11 +137,11 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
                         </div>
                         <div>
                             <p className="text-xs text-gray-400">Start Date</p>
-                            <p className="font-medium text-gray-700">{formatDate(budget.startDate)}</p>
+                            <p className="font-medium text-gray-700">{formatDate(budget.start_date)}</p>
                         </div>
                         <div>
                             <p className="text-xs text-gray-400">End Date</p>
-                            <p className="font-medium text-gray-700">{formatDate(budget.endDate)}</p>
+                            <p className="font-medium text-gray-700">{formatDate(budget.end_date)}</p>
                         </div>
                     </div>
                 </div>
