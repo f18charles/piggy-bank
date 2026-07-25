@@ -6,6 +6,7 @@ import ProtectedRoute from './utils/auth/Protectedroute'
 import Login from './pages/auth/Login'
 import Accounts from './pages/Accounts'
 import Budgets from './pages/Budgets'
+import Goals from './pages/Goals'
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                     <Route index element={<Dashboard />} />
                     <Route path='/accounts' element={<Accounts />} />
                     <Route path='/budget' element={<Budgets />} />
+                    <Route path='/goals' element={<Goals />} />
                 </Route>
             </Route>
             
