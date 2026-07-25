@@ -7,6 +7,7 @@ import Login from './pages/auth/Login'
 import Accounts from './pages/Accounts'
 import Budgets from './pages/Budgets'
 import Goals from './pages/Goals'
+import Transactions from './pages/Transactions'
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                     <Route path='/accounts' element={<Accounts />} />
                     <Route path='/budget' element={<Budgets />} />
                     <Route path='/goals' element={<Goals />} />
+                    <Route path='/transactions' element={<Transactions />} />
                 </Route>
             </Route>
             
