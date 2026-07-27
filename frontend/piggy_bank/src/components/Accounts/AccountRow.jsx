@@ -1,42 +1,136 @@
-const getTypeColor = (type) => {
-    switch (type) {
-        case 'checking': return 'text-blue-600 bg-blue-50'
-        case 'savings': return 'text-emerald-600 bg-emerald-50'
-        case 'investment': return 'text-purple-600 bg-purple-50'
-        case 'credit': return 'text-rose-600 bg-rose-50'
-        default: return 'text-gray-600 bg-gray-50'
+import { useState } from 'react'
+
+const getTypeConfig = (type) => {
+    const configs = {
+        checking: { 
+            color: 'blue', 
+            bg: 'bg-blue-50', 
+            text: 'text-blue-700',
+            border: 'border-blue-200',
+            icon: '🏦',
+            gradient: 'from-blue-500 to-blue-600'
+        },
+        savings: { 
+            color: 'emerald', 
+            bg: 'bg-emerald-50', 
+            text: 'text-emerald-700',
+            border: 'border-emerald-200',
+            icon: '💰',
+            gradient: 'from-emerald-500 to-emerald-600'
+        },
+        investment: { 
+            color: 'purple', 
+            bg: 'bg-purple-50', 
+            text: 'text-purple-700',
+            border: 'border-purple-200',
+            icon: '📈',
+            gradient: 'from-purple-500 to-purple-600'
+        },
+        credit: { 
+            color: 'rose', 
+            bg: 'bg-rose-50', 
+            text: 'text-rose-700',
+            border: 'border-rose-200',
+            icon: '💳',
+            gradient: 'from-rose-500 to-rose-600'
+        },
+        mpesa: { 
+            color: 'orange', 
+            bg: 'bg-orange-50', 
+            text: 'text-orange-700',
+            border: 'border-orange-200',
+            icon: '📱',
+            gradient: 'from-orange-500 to-orange-600'
+        }
     }
+    return configs[type] || configs.checking
 }
- 
-const formatCurrency = (amount, currency) => {
+
+const formatCurrency = (amount, currency = 'USD') => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: currency || 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        currency: currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
     }).format(amount)
 }
 
 const AccountRow = ({ account, onEdit, onDelete, isDeleting }) => {
+    const [isHovered, setIsHovered] = useState(false)
+    const config = getTypeConfig(account.type)
+
     return (
-        <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 p-4 hover:border-emerald-200 hover:shadow-sm transition-all">
-            <div className="flex items-center gap-4">
-                <span className={`text-xs px-2 py-0.5 rounded-full ${getTypeColor(account.type)}`}>{account.type}</span>
-                <div className="">
-                    <p className="text-sm font-semibold text-gray-800">{account.name}</p>
-                    <p className="text-lg font-bold text-gray-900">{formatCurrency(account.balance, account.currency)}</p>
+        <div 
+            className="group bg-white rounded-2xl border border-gray-100 transition-all duration-300 hover:shadow-xl hover:border-emerald-200"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <div className="flex items-center justify-between p-5">
+                {/* Left Section */}
+                <div className="flex items-center gap-5 flex-1 min-w-0">
+                    {/* Icon Circle */}
+                    <div className={`w-12 h-12 rounded-2xl ${config.bg} flex items-center justify-center text-2xl transition-transform duration-300 group-hover:scale-110`}>
+                        {config.icon}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h3 className="text-base font-semibold text-gray-800 truncate">
+                                {account.name}
+                            </h3>
+                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${config.bg} ${config.text} border ${config.border}`}>
+                                {account.type}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1">
+                            <span className="text-lg font-bold text-gray-900">
+                                {formatCurrency(account.balance, account.currency)}
+                            </span>
+                            <span className="text-xs text-gray-400">current balance</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Section - Actions */}
+                <div className="flex items-center gap-2 ml-4">
+                    {/* Quick action buttons that appear on hover */}
+                    <div className={`flex items-center gap-1 transition-all duration-300 ${
+                        isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2'
+                    }`}>
+                        <button 
+                            onClick={() => onEdit(account)} 
+                            className="text-sm px-3 py-1.5 rounded-xl text-emerald-700 hover:bg-emerald-50 transition-all duration-200 flex items-center gap-1.5"
+                        >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit
+                        </button>
+                        <button 
+                            onClick={() => onDelete(account)} 
+                            className="text-sm px-3 py-1.5 rounded-xl text-rose-700 hover:bg-rose-50 transition-all duration-200 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed" 
+                            disabled={isDeleting}
+                        >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            {isDeleting ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
+                    
+                    {/* Always visible action indicator */}
+                    <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all duration-300">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
-            <div className="flex items-center gap-2">
-                <button onClick={() => onEdit(account)} className="text-sm px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors">
-                    Edit
-                </button>
-                <button onClick={() => onDelete(account)} className="text-sm px-3 py-1.5 rounded-lg text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled={isDeleting}>
-                    {isDeleting ? 'Deleting...' : 'Delete'}
-                </button>
-            </div>
+            
+            {/* Bottom gradient accent bar */}
+            <div className={`h-0.5 bg-gradient-to-r ${config.gradient} opacity-0 group-hover:opacity-100 transition-all duration-300`}></div>
         </div>
     )
 }
 
-export default AccountRow;
+export default AccountRow

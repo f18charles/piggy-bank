@@ -146,3 +146,48 @@ func (ts *TxService) TxUpdate(user_id, txID uuid.UUID, req TxUpdateRequest) (*mo
 func (ts *TxService) TxList(user_id uuid.UUID) ([]models.Transaction, error) {
 	return ts.txRepo.ListTransactionsByUser(user_id)
 }
+
+// TxDelete removes a transaction after verifying ownership, reversing its
+// effect on the account balance and any associated budget's spent total.
+func (ts *TxService) TxDelete(user_id, txID uuid.UUID) error {
+	tx, err := ts.txRepo.GetTransactionByID(txID)
+	if err != nil {
+		return err
+	}
+	if tx.UserID != user_id {
+		return utils.ErrForbidden
+	}
+
+	return ts.txRepo.Db.Transaction(func(dbTx *gorm.DB) error {
+		var account models.Account
+		if err := dbTx.First(&account, "id = ?", tx.AccountID).Error; err != nil {
+			slog.Error("tx delete: account lookup failed", "account_id", tx.AccountID, "error", err)
+			return err
+		}
+
+		if tx.Type == "income" {
+			account.Balance -= tx.Amount
+		} else {
+			account.Balance += tx.Amount
+		}
+
+		if err := dbTx.Save(&account).Error; err != nil {
+			slog.Error("tx delete: balance reversal failed",
+				"account_id", tx.AccountID,
+				"new_balance", account.Balance,
+				"error", err)
+			return err
+		}
+
+		if tx.Type == "expense" && tx.CategoryID != nil {
+			dbTx.Model(&models.Budget{}).Where("user_id = ? AND category_id = ?", user_id, *tx.CategoryID).UpdateColumn("spent", gorm.Expr("spent - ?", tx.Amount))
+		}
+
+		if err := dbTx.Delete(&models.Transaction{}, "id = ?", txID).Error; err != nil {
+			slog.Error("tx delete: delete failed", "tx_id", txID, "error", err)
+			return err
+		}
+
+		return nil
+	})
+}
