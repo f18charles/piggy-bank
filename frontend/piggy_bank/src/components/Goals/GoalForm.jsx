@@ -4,25 +4,20 @@ const GoalForm = ({ goal, onSubmit, onCancel, isSubmitting }) => {
     const isEditing = Boolean(goal)
 
     const [name, setName] = useState(goal?.name || '')
-    const [targetAmount, setTargetAmount] = useState(goal?.target_amount || 0)
-    const [currentAmount, setCurrentAmount] = useState(goal?.current_amount || 0)
-    const [deadline, setDeadline] = useState(goal?.deadline || '')
+    const [targetAmount, setTargetAmount] = useState(goal?.target_amount || '')
+    const [deadline, setDeadline] = useState(
+        goal?.deadline ? new Date(goal.deadline).toISOString().split('T')[0] : ''
+    )
 
     const handleSubmit = (e) => {
         e.preventDefault()
         const payload = {
             name,
-            targetAmount: Number(targetAmount),
-            currentAmount: Number(currentAmount),
-            deadline
+            target_amount: Number(targetAmount),
         }
+        if (deadline) payload.deadline = new Date(deadline).toISOString()
         onSubmit(payload)
     }
-
-    // Calculate progress percentage for display
-    const progress = targetAmount > 0 
-        ? Math.min((currentAmount / targetAmount) * 100, 100)
-        : 0
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-4">
@@ -40,7 +35,7 @@ const GoalForm = ({ goal, onSubmit, onCancel, isSubmitting }) => {
                     </svg>
                 </button>
             </div>
-            
+
             <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Goal Name
@@ -74,41 +69,24 @@ const GoalForm = ({ goal, onSubmit, onCancel, isSubmitting }) => {
             </div>
 
             <div>
-                <label htmlFor="currentAmount" className="block text-sm font-medium text-gray-700 mb-1">
-                    Current Amount Saved
-                </label>
-                <input
-                    type="number"
-                    id="currentAmount"
-                    value={currentAmount}
-                    onChange={(e) => setCurrentAmount(e.target.value)}
-                    required
-                    min="0"
-                    step="0.01"
-                    placeholder="0.00"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-                {targetAmount > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
-                        Progress: {progress.toFixed(0)}% complete
-                    </p>
-                )}
-            </div>
-
-            <div>
                 <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-1">
-                    Deadline
+                    Deadline (Optional)
                 </label>
                 <input
                     type="date"
                     id="deadline"
                     value={deadline}
                     onChange={(e) => setDeadline(e.target.value)}
-                    required
                     min={new Date().toISOString().split('T')[0]}
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
             </div>
+
+            {!isEditing && (
+                <p className="text-xs text-gray-400">
+                    New goals start at $0 saved. Use "Add Funds" after creating it to contribute money from one of your accounts.
+                </p>
+            )}
 
             <div className="flex gap-3 pt-2">
                 <button 

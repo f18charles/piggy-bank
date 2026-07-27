@@ -57,7 +57,7 @@ const getDaysRemaining = (deadline) => {
     return days
 }
 
-const GoalRow = ({ goal, onEdit, onDelete, isDeleting }) => {
+const GoalRow = ({ goal, onEdit, onDelete, onContribute, onWithdraw, isDeleting }) => {
     const [showDetails, setShowDetails] = useState(false)
     
     const progress = goal.target_amount > 0 
@@ -65,7 +65,7 @@ const GoalRow = ({ goal, onEdit, onDelete, isDeleting }) => {
         : 0
     
     const remaining = goal.target_amount - goal.current_amount
-    const isComplete = progress >= 100
+    const isComplete = Number(goal.current_amount) >= Number(goal.target_amount)
     const daysRemaining = getDaysRemaining(goal.deadline)
     const status = getStatusBadge(progress, goal.deadline)
 
@@ -124,9 +124,23 @@ const GoalRow = ({ goal, onEdit, onDelete, isDeleting }) => {
                     </button>
 
                     <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => onContribute(goal)}
+                            className="text-sm px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
+                        >
+                            Add Funds
+                        </button>
+                        <button
+                            onClick={() => onWithdraw(goal)}
+                            disabled={!isComplete}
+                            title={!isComplete ? "Withdraw unlocks once the goal reaches its target" : undefined}
+                            className="text-sm px-3 py-1.5 rounded-lg text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                        >
+                            Withdraw
+                        </button>
                         <button 
                             onClick={() => onEdit(goal)} 
-                            className="text-sm px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
+                            className="text-sm px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
                         >
                             Edit
                         </button>
@@ -157,11 +171,11 @@ const GoalRow = ({ goal, onEdit, onDelete, isDeleting }) => {
                             )}
                         </div>
                         <div>
-                            <p className="text-xs text-gray-400">Target _amount</p>
+                            <p className="text-xs text-gray-400">Target Amount</p>
                             <p className="font-medium text-gray-700">{formatCurrency(goal.target_amount)}</p>
                         </div>
                         <div>
-                            <p className="text-xs text-gray-400">Current _amount</p>
+                            <p className="text-xs text-gray-400">Current Amount</p>
                             <p className="font-medium text-gray-700">{formatCurrency(goal.current_amount)}</p>
                         </div>
                     </div>
