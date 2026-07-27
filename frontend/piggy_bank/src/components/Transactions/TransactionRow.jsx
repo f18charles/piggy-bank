@@ -90,7 +90,7 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                 {/* Amount */}
                 <div className="col-span-2 text-right">
                     <span className={`text-sm font-bold ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount, transaction.account?.currency)}
                     </span>
                 </div>
 
@@ -141,16 +141,17 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                     <div className="col-span-12">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
-                                <p className="text-xs text-gray-400">Account ID</p>
-                                <p className="font-mono text-xs text-gray-700 truncate">
-                                    {transaction.accountId || transaction.account_id}
+                                <p className="text-xs text-gray-400">Account</p>
+                                <p className="text-xs text-gray-700 truncate">
+                                    {transaction.account?.name || 'Unknown account'}
                                 </p>
                             </div>
-                            {(transaction.categoryId || transaction.category_id) && (
+                            {transaction.category && (
                                 <div>
-                                    <p className="text-xs text-gray-400">Category ID</p>
-                                    <p className="font-mono text-xs text-gray-700 truncate">
-                                        {transaction.categoryId || transaction.category_id}
+                                    <p className="text-xs text-gray-400">Category</p>
+                                    <p className="text-xs text-gray-700 truncate">
+                                        {transaction.category.icon ? `${transaction.category.icon} ` : ''}
+                                        {transaction.category.name}
                                     </p>
                                 </div>
                             )}
