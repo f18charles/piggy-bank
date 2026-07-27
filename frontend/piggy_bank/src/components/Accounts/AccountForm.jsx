@@ -23,7 +23,7 @@ const AccountForm = ({ account, onSubmit, onCancel, isSubmitting }) => {
         onSubmit(payload)
     }
 
-    const selectedType = ACCOUNT_TYPES.find(t => t.value === type)
+    // const selectedType = ACCOUNT_TYPES.find(t => t.value === type)
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-5">
