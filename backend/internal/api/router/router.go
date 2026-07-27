@@ -64,6 +64,7 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/transactions/export", txHandler.ExportTransactions)
 		protected.GET("/transactions/:id", txHandler.GetTransaction)
 		protected.PATCH("/transactions/:id", txHandler.UpdateTransaction)
+		protected.DELETE("/transactions/:id", txHandler.DeleteTransaction)
 
 		// Categories
 		protected.GET("/categories", categoryHandler.ListCategories)

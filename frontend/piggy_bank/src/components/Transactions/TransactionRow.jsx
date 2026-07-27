@@ -67,7 +67,7 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                             {transaction.description || 'Untitled Transaction'}
                         </span>
                         <span className="text-xs text-gray-400">
-                            {formatDate(transaction.transactionDate)}
+                            {formatDate(transaction.transactionDate || transaction.transaction_date)}
                         </span>
                     </div>
                 </div>
@@ -81,9 +81,9 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
 
                 {/* Payment Method */}
                 <div className="col-span-2 flex items-center gap-1.5">
-                    <span className="text-sm">{getPaymentMethodIcon(transaction.paymentMethod)}</span>
+                    <span className="text-sm">{getPaymentMethodIcon(transaction.paymentMethod || transaction.payment_method)}</span>
                     <span className="text-sm text-gray-700 capitalize">
-                        {transaction.paymentMethod?.replace('_', ' ') || 'N/A'}
+                        {(transaction.paymentMethod || transaction.payment_method)?.replace('_', ' ') || 'N/A'}
                     </span>
                 </div>
 
@@ -146,7 +146,7 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                                     {transaction.accountId || transaction.account_id}
                                 </p>
                             </div>
-                            {transaction.categoryId && (
+                            {(transaction.categoryId || transaction.category_id) && (
                                 <div>
                                     <p className="text-xs text-gray-400">Category ID</p>
                                     <p className="font-mono text-xs text-gray-700 truncate">
@@ -154,7 +154,7 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                                     </p>
                                 </div>
                             )}
-                            {transaction.referenceId && (
+                            {(transaction.referenceId || transaction.reference_id) && (
                                 <div>
                                     <p className="text-xs text-gray-400">Reference ID</p>
                                     <p className="font-mono text-xs text-gray-700 truncate">
@@ -164,7 +164,7 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                             )}
                             <div>
                                 <p className="text-xs text-gray-400">Created At</p>
-                                <p className="text-xs text-gray-700">{formatDate(transaction.createdAt)}</p>
+                                <p className="text-xs text-gray-700">{formatDate(transaction.createdAt || transaction.created_at)}</p>
                             </div>
                         </div>
                     </div>

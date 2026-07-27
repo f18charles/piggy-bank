@@ -115,6 +115,36 @@ func (th *TransactionHandler) UpdateTransaction(c *gin.Context) {
 	utils.SuccessResponse(c, http.StatusOK, tx)
 }
 
+// DeleteTransaction deletes a transaction owned by the authenticated user.
+func (th *TransactionHandler) DeleteTransaction(c *gin.Context) {
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	paramID := c.Param("id")
+	txID, err := uuid.Parse(paramID)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "invalid transaction id")
+		return
+	}
+
+	if err := th.transactionService.TxDelete(id, txID); err != nil {
+		switch err {
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "transaction not found")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to delete this transaction")
+		default:
+			slog.Error("DeleteTransaction failed", "user_id", id, "tx_id", txID, "error", err.Error())
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to delete transaction")
+		}
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, gin.H{"id": txID})
+}
+
 // ExportTransactions exports transactions (CSV/other) for the user.
 func (th *TransactionHandler) ExportTransactions(c *gin.Context) {
 	id, err := auth.ConfirmAuthedUser(c)

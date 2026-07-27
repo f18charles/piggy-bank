@@ -7,17 +7,17 @@ const STATUSES = ['pending', 'completed', 'failed']
 const TransactionForm = ({ transaction, onSubmit, onCancel, isSubmitting }) => {
     const isEditing = Boolean(transaction)
 
-    const [accountId, setAccountId] = useState(transaction?.accountId || '')
-    const [categoryId, setCategoryId] = useState(transaction?.categoryId || '')
+    const [accountId, setAccountId] = useState(transaction?.accountId || transaction?.account_id || '')
+    const [categoryId, setCategoryId] = useState(transaction?.categoryId || transaction?.category_id || '')
     const [amount, setAmount] = useState(transaction?.amount || 0)
     const [type, setType] = useState(transaction?.type || TRANSACTION_TYPES[0])
     const [description, setDescription] = useState(transaction?.description || '')
-    const [paymentMethod, setPaymentMethod] = useState(transaction?.paymentMethod || PAYMENT_METHODS[0])
-    const [referenceId, setReferenceId] = useState(transaction?.referenceId || '')
+    const [paymentMethod, setPaymentMethod] = useState(transaction?.paymentMethod || transaction?.payment_method || PAYMENT_METHODS[0])
+    const [referenceId, setReferenceId] = useState(transaction?.referenceId || transaction?.reference_id || '')
     const [status, setStatus] = useState(transaction?.status || STATUSES[0])
     const [transactionDate, setTransactionDate] = useState(
-        transaction?.transactionDate 
-            ? new Date(transaction.transactionDate).toISOString().split('T')[0]
+        (transaction?.transactionDate || transaction?.transaction_date)
+            ? new Date(transaction.transactionDate || transaction.transaction_date).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0]
     )
 
