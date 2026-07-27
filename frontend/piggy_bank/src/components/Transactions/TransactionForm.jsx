@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { apiGet } from "../../utils/Client"
 
 const TRANSACTION_TYPES = ['income', 'expense']
 const PAYMENT_METHODS = ['cash', 'credit_card', 'debit_card', 'bank_transfer', 'mobile_money', 'check', 'other']
@@ -20,6 +21,45 @@ const TransactionForm = ({ transaction, onSubmit, onCancel, isSubmitting }) => {
             ? new Date(transaction.transactionDate || transaction.transaction_date).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0]
     )
+
+    const [accounts, setAccounts] = useState([])
+    const [categories, setCategories] = useState([])
+    const [isLoadingOptions, setIsLoadingOptions] = useState(!isEditing)
+    const [optionsError, setOptionsError] = useState(null)
+
+    useEffect(() => {
+        if (isEditing) return
+
+        let ignore = false
+
+        async function loadOptions() {
+            setIsLoadingOptions(true)
+            setOptionsError(null)
+            try {
+                const [accountsData, categoriesData] = await Promise.all([
+                    apiGet("/accounts"),
+                    apiGet("/categories"),
+                ])
+                if (!ignore) {
+                    setAccounts(accountsData || [])
+                    setCategories(categoriesData || [])
+                }
+            } catch (err) {
+                if (!ignore) setOptionsError(err.message)
+            } finally {
+                if (!ignore) setIsLoadingOptions(false)
+            }
+        }
+
+        loadOptions()
+
+        return () => {
+            ignore = true
+        }
+    }, [isEditing])
+
+    // Only show categories matching the selected transaction type
+    const filteredCategories = categories.filter((c) => c.type === type)
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -84,33 +124,65 @@ const TransactionForm = ({ transaction, onSubmit, onCancel, isSubmitting }) => {
             ) : (
                 // Create mode - all fields
                 <>
+                    {optionsError && (
+                        <div className="text-sm text-rose-600 bg-rose-50 rounded-lg px-3 py-2">
+                            Couldn't load accounts/categories: {optionsError}
+                        </div>
+                    )}
+
                     <div>
                         <label htmlFor="accountId" className="block text-sm font-medium text-gray-700 mb-1">
-                            Account ID
+                            Account
                         </label>
-                        <input
-                            type="text"
+                        <select
                             id="accountId"
                             value={accountId}
                             onChange={(e) => setAccountId(e.target.value)}
                             required
-                            placeholder="e.g., 123e4567-e89b-12d3-a456-426614174000"
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                            disabled={isLoadingOptions}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+                        >
+                            <option value="" disabled>
+                                {isLoadingOptions ? 'Loading accounts...' : 'Select an account'}
+                            </option>
+                            {accounts.map((account) => (
+                                <option key={account.id} value={account.id}>
+                                    {account.name} {account.currency ? `(${account.currency})` : ''}
+                                </option>
+                            ))}
+                        </select>
+                        {!isLoadingOptions && !optionsError && accounts.length === 0 && (
+                            <p className="text-xs text-gray-400 mt-1">
+                                No accounts found. Add an account first.
+                            </p>
+                        )}
                     </div>
 
                     <div>
                         <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
-                            Category ID (Optional)
+                            Category (Optional)
                         </label>
-                        <input
-                            type="text"
+                        <select
                             id="categoryId"
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            placeholder="e.g., 123e4567-e89b-12d3-a456-426614174000"
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                            disabled={isLoadingOptions}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+                        >
+                            <option value="">
+                                {isLoadingOptions ? 'Loading categories...' : 'No category'}
+                            </option>
+                            {filteredCategories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.icon ? `${category.icon} ` : ''}{category.name}
+                                </option>
+                            ))}
+                        </select>
+                        {!isLoadingOptions && !optionsError && filteredCategories.length === 0 && (
+                            <p className="text-xs text-gray-400 mt-1">
+                                No {type} categories found.
+                            </p>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -137,7 +209,11 @@ const TransactionForm = ({ transaction, onSubmit, onCancel, isSubmitting }) => {
                             <select
                                 id="type"
                                 value={type}
-                                onChange={(e) => setType(e.target.value)}
+                                onChange={(e) => {
+                                    setType(e.target.value)
+                                    // Reset category since it's type-specific
+                                    setCategoryId('')
+                                }}
                                 required
                                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                             >
