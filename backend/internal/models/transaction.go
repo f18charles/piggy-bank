@@ -12,6 +12,7 @@ type Transaction struct {
 	UserID          uuid.UUID  `gorm:"type:uuid;not null" json:"user_id"`
 	AccountID       uuid.UUID  `gorm:"type:uuid;not null" json:"account_id"`
 	CategoryID      *uuid.UUID `gorm:"type:uuid" json:"category_id"`
+	GoalID          *uuid.UUID `gorm:"type:uuid" json:"goal_id"`
 	Amount          float64    `gorm:"type:numeric(15,2);not null" json:"amount"`
 	Type            string     `gorm:"not null" json:"type"`
 	Description     string     `json:"description"`
@@ -24,6 +25,7 @@ type Transaction struct {
 	User     User      `gorm:"foreignKey:UserID" json:"-"`
 	Account  Account   `gorm:"foreignKey:AccountID" json:"account"`
 	Category *Category `gorm:"foreignKey:CategoryID" json:"category,omitempty"`
+	Goal     *Goal     `gorm:"foreignKey:GoalID" json:"goal,omitempty"`
 }
 
 func (t *Transaction) BeforeCreate(tx *gorm.DB) error {
