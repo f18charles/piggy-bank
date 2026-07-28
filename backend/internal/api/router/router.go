@@ -85,6 +85,8 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/goals/:id", goalHandler.GetGoal)
 		protected.PATCH("/goals/:id", goalHandler.UpdateGoal)
 		protected.DELETE("/goals/:id", goalHandler.DeleteGoal)
+		protected.POST("/goals/:id/contribute", goalHandler.ContributeToGoal)
+		protected.POST("/goals/:id/withdraw", goalHandler.WithdrawFromGoal)
 
 		// Summary & Insights
 		protected.GET("/insights/summary/monthly", summaryHandler.MonthlySummary)

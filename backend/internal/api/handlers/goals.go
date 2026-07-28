@@ -124,3 +124,82 @@ func (gh *GoalHandler) DeleteGoal(c *gin.Context) {
 	}
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "goal deleted successfully"})
 }
+
+// ContributeToGoal moves money from an account into a goal.
+func (gh *GoalHandler) ContributeToGoal(c *gin.Context) {
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	param_id := c.Param("id")
+	goal_id, err := uuid.Parse(param_id)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "invalid goal id")
+		return
+	}
+
+	var req services.GoalContributeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	goal, err := gh.goalService.GoalContribute(id, goal_id, req)
+	if err != nil {
+		switch err {
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "goal or account not found")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to use this goal or account")
+		case utils.ErrBadRequest:
+			utils.ErrorResponse(c, http.StatusBadRequest, "amount must be greater than zero")
+		default:
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to contribute to goal")
+		}
+		return
+	}
+	utils.SuccessResponse(c, http.StatusOK, goal)
+}
+
+// WithdrawFromGoal moves money from a goal back into an account. Only
+// allowed once the goal has reached its target amount.
+func (gh *GoalHandler) WithdrawFromGoal(c *gin.Context) {
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	param_id := c.Param("id")
+	goal_id, err := uuid.Parse(param_id)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "invalid goal id")
+		return
+	}
+
+	var req services.GoalWithdrawRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	goal, err := gh.goalService.GoalWithdraw(id, goal_id, req)
+	if err != nil {
+		switch err {
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "goal or account not found")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to use this goal or account")
+		case utils.ErrBadRequest:
+			utils.ErrorResponse(c, http.StatusBadRequest, "amount must be greater than zero")
+		case utils.ErrGoalNotReached:
+			utils.ErrorResponse(c, http.StatusBadRequest, "goal has not reached its target yet; early withdrawal isn't supported yet")
+		case utils.ErrInsufficientGoalFunds:
+			utils.ErrorResponse(c, http.StatusBadRequest, "withdrawal amount exceeds the goal's current amount")
+		default:
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to withdraw from goal")
+		}
+		return
+	}
+	utils.SuccessResponse(c, http.StatusOK, goal)
+}

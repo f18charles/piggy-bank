@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { apiGet, apiPost, apiPatch, apiDelete } from "../utils/Client"
 import GoalRow from "../components/Goals/GoalRow"
 import GoalForm from "../components/Goals/GoalForm"
+import GoalFundsForm from "../components/Goals/GoalFundsForm"
 
 const Goals = () => {
     const [goals, setGoals] = useState([])
@@ -13,6 +14,10 @@ const Goals = () => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [deletingId, setDeletingId] = useState(null)
     const [actionError, setActionError] = useState(null)
+
+    // Contribute / withdraw modal: { goal, mode: 'contribute' | 'withdraw' } | null
+    const [fundsAction, setFundsAction] = useState(null)
+    const [isFundsSubmitting, setIsFundsSubmitting] = useState(false)
 
     const loadGoals = useCallback(async () => {
         try {
@@ -95,6 +100,38 @@ const Goals = () => {
             setActionError(err.message)
         } finally {
             setDeletingId(null)
+        }
+    }
+
+    const openContributeForm = (goal) => {
+        setActionError(null)
+        setFundsAction({ goal, mode: 'contribute' })
+    }
+
+    const openWithdrawForm = (goal) => {
+        setActionError(null)
+        setFundsAction({ goal, mode: 'withdraw' })
+    }
+
+    const closeFundsForm = () => {
+        setFundsAction(null)
+    }
+
+    const handleFundsSubmit = async (payload) => {
+        if (!fundsAction) return
+        setIsFundsSubmitting(true)
+        setActionError(null)
+        try {
+            const path = fundsAction.mode === 'withdraw'
+                ? `/goals/${fundsAction.goal.id}/withdraw`
+                : `/goals/${fundsAction.goal.id}/contribute`
+            await apiPost(path, payload)
+            closeFundsForm()
+            await loadGoals()
+        } catch (err) {
+            setActionError(err.message)
+        } finally {
+            setIsFundsSubmitting(false)
         }
     }
 
@@ -205,7 +242,7 @@ const Goals = () => {
                 </div>
             )}
 
-            {/* Modal */}
+            {/* Create/Edit Modal */}
             {isFormOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4">
@@ -222,6 +259,27 @@ const Goals = () => {
                                 onSubmit={handleSubmit}
                                 onCancel={closeForm}
                                 isSubmitting={isSubmitting}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Contribute / Withdraw Modal */}
+            {fundsAction && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4">
+                        <div 
+                            className="fixed inset-0 bg-black opacity-50 transition-opacity"
+                            onClick={closeFundsForm}
+                        />
+                        <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full mx-auto">
+                            <GoalFundsForm
+                                goal={fundsAction.goal}
+                                mode={fundsAction.mode}
+                                onSubmit={handleFundsSubmit}
+                                onCancel={closeFundsForm}
+                                isSubmitting={isFundsSubmitting}
                             />
                         </div>
                     </div>
@@ -267,6 +325,8 @@ const Goals = () => {
                             goal={goal}
                             onEdit={openEditForm}
                             onDelete={handleDelete}
+                            onContribute={openContributeForm}
+                            onWithdraw={openWithdrawForm}
                             isDeleting={deletingId === goal.id}
                         />
                     ))}

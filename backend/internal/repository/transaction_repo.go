@@ -27,7 +27,7 @@ func (tr *TransactionRepo) CreateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) GetTransactionByID(txID uuid.UUID) (*models.Transaction, error) {
 	var tx models.Transaction
-	result := tr.Db.Where("id = ?", txID).Preload("Account").Preload("Category").First(&tx)
+	result := tr.Db.Where("id = ?", txID).Preload("Account").Preload("Category").Preload("Goal").First(&tx)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, utils.ErrNotFound
@@ -44,7 +44,7 @@ func (tr *TransactionRepo) UpdateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Transaction, error) {
 	txs := []models.Transaction{}
-	result := tr.Db.Where("user_id = ?", userID).Preload("Account").Preload("Category").Find(&txs)
+	result := tr.Db.Where("user_id = ?", userID).Preload("Account").Preload("Category").Preload("Goal").Find(&txs)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -53,7 +53,7 @@ func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Tr
 
 func (tr *TransactionRepo) ListTransactionsByUserSince(user_id uuid.UUID, since_date time.Time) ([]models.Transaction, error) {
 	var txs []models.Transaction
-	result := tr.Db.Where("user_id = ? AND COALESCE(transaction_date, created_at) >= ?", user_id, since_date).Preload("Account").Preload("Category").Order("transaction_date DESC").Find(&txs)
+	result := tr.Db.Where("user_id = ? AND COALESCE(transaction_date, created_at) >= ?", user_id, since_date).Preload("Account").Preload("Category").Preload("Goal").Order("transaction_date DESC").Find(&txs)
 
 	if result.Error != nil {
 		return nil, result.Error
