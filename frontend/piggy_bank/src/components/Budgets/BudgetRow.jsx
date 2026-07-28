@@ -17,7 +17,7 @@ const getProgressColor = (percentage) => {
     return 'bg-rose-500'
 }
 
-const formatCurrency = (amount, currency = 'USD') => {
+const formatCurrency = (amount, currency = 'kes') => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currency,

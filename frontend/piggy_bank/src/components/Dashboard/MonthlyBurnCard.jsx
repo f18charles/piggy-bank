@@ -3,7 +3,7 @@ const MonthlyBurnCard = ({data}) => {
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: data.currency || 'USD',
+            currency: data.currency || 'kes',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(amount);

@@ -30,7 +30,7 @@ const getStatusBadge = (percentage, deadline) => {
     return { label: 'In Progress', color: 'bg-blue-100 text-blue-700' }
 }
 
-const formatCurrency = (_amount, currency = 'USD') => {
+const formatCurrency = (_amount, currency = 'kes') => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currency,
