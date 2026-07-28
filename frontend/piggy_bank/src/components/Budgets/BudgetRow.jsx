@@ -49,20 +49,20 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
 
     return (
         <div className="bg-white rounded-xl border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all">
-            <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4 flex-1">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${getPeriodColor(budget.period)}`}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full ${getPeriodColor(budget.period)}`}>
                         {budget.period.charAt(0).toUpperCase() + budget.period.slice(1)}
                     </span>
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                             <p
-                                className="text-sm font-semibold text-gray-800"
+                                className="text-sm font-semibold text-gray-800 truncate"
                                 style={budget.category?.color ? { color: budget.category.color } : undefined}
                             >
                                 {categoryName}
                             </p>
-                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-400 hidden sm:inline">•</span>
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-600">
                                     {formatCurrency(budget.amount)}
@@ -87,41 +87,40 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 ml-4">
-                    <div className="text-right">
+                <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 sm:ml-4">
+                    <div className="text-left sm:text-right">
                         <p className={`text-sm font-semibold ${isOverBudget ? 'text-rose-600' : 'text-gray-900'}`}>
                             {formatCurrency(remaining)}
                         </p>
                         <p className="text-xs text-gray-400">remaining</p>
                     </div>
 
-                    <button 
-                        onClick={() => setShowDetails(!showDetails)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        <svg 
-                            className={`w-4 h-4 transform transition-transform ${showDetails ? 'rotate-180' : ''}`}
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
                     <div className="flex items-center gap-1">
                         <button 
+                            onClick={() => setShowDetails(!showDetails)}
+                            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                        >
+                            <svg 
+                                className={`w-4 h-4 transform transition-transform ${showDetails ? 'rotate-180' : ''}`}
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <button 
                             onClick={() => onEdit(budget)} 
-                            className="text-sm px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
+                            className="text-sm px-2 sm:px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
                         >
                             Edit
                         </button>
                         <button 
                             onClick={() => onDelete(budget)} 
-                            className="text-sm px-3 py-1.5 rounded-lg text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                            className="text-sm px-2 sm:px-3 py-1.5 rounded-lg text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
                             disabled={isDeleting}
                         >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
+                            {isDeleting ? '...' : 'Delete'}
                         </button>
                     </div>
                 </div>
@@ -130,7 +129,7 @@ const BudgetRow = ({ budget, onEdit, onDelete, isDeleting }) => {
             {/* Expanded details */}
             {showDetails && (
                 <div className="px-4 pb-4 pt-2 border-t border-gray-100">
-                    <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm">
                         <div>
                             <p className="text-xs text-gray-400">Period</p>
                             <p className="font-medium text-gray-700 capitalize">{budget.period}</p>

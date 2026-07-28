@@ -56,7 +56,7 @@ const BudgetForm = ({ budget, categories, onSubmit, onCancel, isSubmitting }) =>
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 space-y-4">
             <h2 className="text-lg font-semibold text-gray-800">
                 {isEditing ? 'Edit Budget' : 'Add New Budget'}
             </h2>
