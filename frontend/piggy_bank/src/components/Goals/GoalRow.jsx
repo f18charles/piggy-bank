@@ -71,38 +71,36 @@ const GoalRow = ({ goal, onEdit, onDelete, onContribute, onWithdraw, isDeleting 
 
     return (
         <div className="bg-white rounded-xl border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all">
-            <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4 flex-1">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                            <p className="text-sm font-semibold text-gray-800">
-                                {goal.name}
-                            </p>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${status.color}`}>
-                                {status.label}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-4">
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <p className="text-sm font-semibold text-gray-800 truncate">
+                            {goal.name}
+                        </p>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${status.color}`}>
+                            {status.label}
+                        </span>
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="mt-2">
+                        <div className="flex justify-between text-xs text-gray-500 mb-0.5">
+                            <span>
+                                {formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}
                             </span>
+                            <span>{progress.toFixed(0)}%</span>
                         </div>
-                        
-                        {/* Progress bar */}
-                        <div className="mt-2">
-                            <div className="flex justify-between text-xs text-gray-500 mb-0.5">
-                                <span>
-                                    {formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}
-                                </span>
-                                <span>{progress.toFixed(0)}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                <div 
-                                    className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
-                                    style={{ width: `${Math.min(progress, 100)}%` }}
-                                />
-                            </div>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5">
+                            <div 
+                                className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
+                                style={{ width: `${Math.min(progress, 100)}%` }}
+                            />
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 ml-4">
-                    <div className="text-right min-w-[80px]">
+                <div className="flex items-center justify-between gap-3 lg:gap-4 lg:ml-4">
+                    <div className="text-left lg:text-right lg:min-w-[80px]">
                         <p className={`text-sm font-semibold ${isComplete ? 'text-emerald-600' : 'text-gray-900'}`}>
                             {formatCurrency(remaining)}
                         </p>
@@ -111,7 +109,7 @@ const GoalRow = ({ goal, onEdit, onDelete, onContribute, onWithdraw, isDeleting 
                     
                     <button 
                         onClick={() => setShowDetails(!showDetails)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors shrink-0"
                     >
                         <svg 
                             className={`w-4 h-4 transform transition-transform ${showDetails ? 'rotate-180' : ''}`}
@@ -122,43 +120,43 @@ const GoalRow = ({ goal, onEdit, onDelete, onContribute, onWithdraw, isDeleting 
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
+                </div>
 
-                    <div className="flex items-center gap-1">
-                        <button
-                            onClick={() => onContribute(goal)}
-                            className="text-sm px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
-                        >
-                            Add Funds
-                        </button>
-                        <button
-                            onClick={() => onWithdraw(goal)}
-                            disabled={!isComplete}
-                            title={!isComplete ? "Withdraw unlocks once the goal reaches its target" : undefined}
-                            className="text-sm px-3 py-1.5 rounded-lg text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                        >
-                            Withdraw
-                        </button>
-                        <button 
-                            onClick={() => onEdit(goal)} 
-                            className="text-sm px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-                        >
-                            Edit
-                        </button>
-                        <button 
-                            onClick={() => onDelete(goal)} 
-                            className="text-sm px-3 py-1.5 rounded-lg text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
-                        </button>
-                    </div>
+                <div className="flex items-center flex-wrap gap-1 -mx-1 lg:mx-0">
+                    <button
+                        onClick={() => onContribute(goal)}
+                        className="text-sm px-2.5 sm:px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
+                    >
+                        Add Funds
+                    </button>
+                    <button
+                        onClick={() => onWithdraw(goal)}
+                        disabled={!isComplete}
+                        title={!isComplete ? "Withdraw unlocks once the goal reaches its target" : undefined}
+                        className="text-sm px-2.5 sm:px-3 py-1.5 rounded-lg text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    >
+                        Withdraw
+                    </button>
+                    <button 
+                        onClick={() => onEdit(goal)} 
+                        className="text-sm px-2.5 sm:px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    >
+                        Edit
+                    </button>
+                    <button 
+                        onClick={() => onDelete(goal)} 
+                        className="text-sm px-2.5 sm:px-3 py-1.5 rounded-lg text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </button>
                 </div>
             </div>
 
             {/* Expanded details */}
             {showDetails && (
                 <div className="px-4 pb-4 pt-2 border-t border-gray-100">
-                    <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm">
                         <div>
                             <p className="text-xs text-gray-400">Deadline</p>
                             <p className="font-medium text-gray-700">{formatDate(goal.deadline)}</p>
