@@ -4,7 +4,7 @@ const DashData = {
         totalLiabilities: 82000,
         netWorth: 163000,
         changePercentage: 2.4,
-        currency: "USD"
+        currency: "kes"
     },
 
     monthlyBurn: {
@@ -12,7 +12,7 @@ const DashData = {
         monthlyIncome: 7200,
         burnRate: 67.36,
         projectedRunway: 33.6,
-        currency: "USD"
+        currency: "kes"
     },
 
     accounts: [
@@ -21,21 +21,21 @@ const DashData = {
         name: "Chase Checking",
         type: "checking",
         balance: 12450.75,
-        currency: "USD"
+        currency: "kes"
         },
         {
         id: "acc_002",
         name: "Vanguard Roth IRA",
         type: "investment",
         balance: 87650.30,
-        currency: "USD"
+        currency: "kes"
         },
         {
         id: "acc_003",
         name: "Amex Platinum",
         type: "credit",
         balance: -3240.50,
-        currency: "USD"
+        currency: "kes"
         }
     ],
 

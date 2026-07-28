@@ -26,7 +26,7 @@ const AccountForm = ({ account, onSubmit, onCancel, isSubmitting }) => {
     // const selectedType = ACCOUNT_TYPES.find(t => t.value === type)
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-4 sm:p-6 space-y-5">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div>

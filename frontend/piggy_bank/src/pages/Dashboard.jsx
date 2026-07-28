@@ -31,7 +31,7 @@ const Dashboard = () => {
     }, [])
 
     if (loading) {
-        return <div className="p-4 max-w-7xl mx-auto">
+        return <div className="p-3 sm:p-4 max-w-7xl mx-auto">
            <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
@@ -39,7 +39,7 @@ const Dashboard = () => {
     }
 
     if (error) {
-        return <div className="p-4 max-w-7xl mx-auto">
+        return <div className="p-3 sm:p-4 max-w-7xl mx-auto">
             <p className="text-sm text-rose-500">
                 Dashboard couldn't load
             </p>
@@ -47,9 +47,9 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="p-4 max-w-7xl mx-auto">
+        <div className="p-3 sm:p-4 max-w-7xl mx-auto">
             {/* Page Title */}
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
             
             {/* Top Row: NetWorth & MonthlyBurn - 2 columns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

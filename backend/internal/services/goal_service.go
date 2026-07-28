@@ -165,6 +165,7 @@ func (gs *GoalService) GoalContribute(user_id, goal_id uuid.UUID, req GoalContri
 			AccountID:       account.ID,
 			GoalID:          &goal.ID,
 			Amount:          req.Amount,
+			PaymentMethod:   "cash",
 			Type:            "expense",
 			Description:     "Contribution to goal: " + goal.Name,
 			Status:          "completed",

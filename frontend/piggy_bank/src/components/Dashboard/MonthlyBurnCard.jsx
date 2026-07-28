@@ -3,7 +3,7 @@ const MonthlyBurnCard = ({data}) => {
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: data.currency || 'USD',
+            currency: data.currency || 'kes',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(amount);
@@ -17,13 +17,13 @@ const MonthlyBurnCard = ({data}) => {
     };
 
     return (
-        <div className="bg-white rounded-2xl border-l-4 border-emerald-500 shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
+        <div className="bg-white rounded-2xl border-l-4 border-emerald-500 shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
                         Monthly Burn
                     </p>
-                    <p className="text-2xl font-bold text-gray-800 mt-1">
+                    <p className="text-xl sm:text-2xl font-bold text-gray-800 mt-1 break-words">
                         {formatCurrency(data.average_monthly_spend)}
                     </p>
                     <div className="flex items-center gap-3 mt-2">
@@ -32,7 +32,7 @@ const MonthlyBurnCard = ({data}) => {
                         </span>
                     </div>
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right shrink-0">
                     <p className="text-xs text-emerald-600">Income</p>
                     <p className="text-md font-semibold text-emerald-700">
                         {formatCurrency(data.monthly_income)}

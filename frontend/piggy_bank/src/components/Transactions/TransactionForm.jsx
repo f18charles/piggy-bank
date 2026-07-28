@@ -86,7 +86,7 @@ const TransactionForm = ({ transaction, onSubmit, onCancel, isSubmitting }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800">
                     {isEditing ? 'Edit Transaction' : 'Add New Transaction'}

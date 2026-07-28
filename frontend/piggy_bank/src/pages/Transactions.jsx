@@ -165,11 +165,11 @@ const Transactions = () => {
     const stats = getSummaryStats()
 
     return (
-        <div className="p-4 max-w-6xl mx-auto">
+        <div className="p-3 sm:p-4 max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Transactions</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Transactions</h1>
                     {stats && (
                         <p className="text-sm text-gray-500 mt-1">
                             {stats.totalCount} {stats.totalCount === 1 ? 'transaction' : 'transactions'} • 
@@ -179,7 +179,7 @@ const Transactions = () => {
                 </div>
                 <button
                     onClick={openCreateForm}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg px-4 py-2 transition-colors flex items-center gap-2"
+                    className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg px-4 py-2 transition-colors flex items-center gap-2"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -220,7 +220,7 @@ const Transactions = () => {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-3 mb-4">
-                <div className="flex-1 min-w-[200px]">
+                <div className="w-full sm:flex-1 sm:min-w-[200px]">
                     <input
                         type="text"
                         placeholder="Search transactions..."
@@ -232,7 +232,7 @@ const Transactions = () => {
                 <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 sm:flex-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                     <option value="all">All Types</option>
                     <option value="income">Income</option>
@@ -241,7 +241,7 @@ const Transactions = () => {
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 sm:flex-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                     <option value="all">All Status</option>
                     <option value="completed">Completed</option>
@@ -338,8 +338,8 @@ const Transactions = () => {
                 </div>
             ) : (
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {/* Table Header - desktop/tablet only, mobile uses cards inside TransactionRow */}
+                    <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <div className="col-span-3">Description</div>
                         <div className="col-span-2">Type</div>
                         <div className="col-span-2">Payment Method</div>
