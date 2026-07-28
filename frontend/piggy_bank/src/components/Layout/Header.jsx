@@ -1,10 +1,10 @@
 import brand from "../../assets/piggybank.png";
 import { Link, useNavigate } from 'react-router-dom';
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdMenu } from "react-icons/md";
 import { useState } from 'react';
 import useAuth from '../../utils/auth/Useauth';
 
-const Header = () => {
+const Header = ({ onMenuClick }) => {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -25,21 +25,30 @@ const Header = () => {
 
     return (
         <header className="w-full bg-white/95 backdrop-blur-sm border-b border-emerald-100/50 shadow-sm sticky top-0 z-50">
-            <nav className="px-6 py-3 flex items-center justify-between">
-                {/* Logo */}
-                <Link to="/" className="flex items-center group">
-                    <div className="rounded-xl ">
-                        <img src={brand} className="w-25 object-contain" alt="logo" />
-                    </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent">
-                        PiggyBank
-                    </span>
-                </Link>
+            <nav className="px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+                {/* Left: mobile menu button + Logo */}
+                <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+                    <button
+                        onClick={onMenuClick}
+                        className="md:hidden p-2 -ml-1 rounded-xl text-emerald-700 hover:bg-emerald-50 transition-colors shrink-0"
+                        aria-label="Open menu"
+                    >
+                        <MdMenu className="w-6 h-6" />
+                    </button>
+                    <Link to="/" className="flex items-center group min-w-0">
+                        <div className="rounded-xl shrink-0">
+                            <img src={brand} className="w-16 sm:w-20 md:w-25 object-contain" alt="logo" />
+                        </div>
+                        <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent truncate">
+                            PiggyBank
+                        </span>
+                    </Link>
+                </div>
 
                 {/* Right Section */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
                     {/* Notification */}
-                    <button className="relative p-2 rounded-xl hover:bg-emerald-50 transition-colors">
+                    <button className="relative p-2 rounded-xl hover:bg-emerald-50 transition-colors hidden sm:inline-flex">
                         <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -47,8 +56,8 @@ const Header = () => {
                     </button>
 
                     {/* User Avatar */}
-                    <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-medium shadow-sm">
+                    <div className="flex items-center gap-2 pl-0 sm:pl-2 sm:border-l border-gray-200">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-medium shadow-sm shrink-0">
                             {initials}
                         </div>
                         <div className="hidden md:block">
