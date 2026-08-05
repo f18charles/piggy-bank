@@ -11,6 +11,12 @@ const Login = () => {
      const {login} = useAuth()
     const navigate = useNavigate()
 
+    const autoAdd = (e) => {
+        e.preventDefault()
+        setEmail('demo@email.com')
+        setPassword('demo1234')
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -35,6 +41,13 @@ const Login = () => {
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Login
                 </h1>
+                <div className="m-2 bg-emerald-50 p-3 rounded-xl border-1 border-emerald-100/50 shadow-xs text-sm flex flex-col gap-3">
+                    <p>There is a demo account already created
+                    Login with the following credentials</p>
+                    <p><strong className="text-emerald-700">email</strong>: demo@email.com</p>
+                    <p><strong className="text-emerald-700">password:</strong> demo1234</p>
+                    <button onClick={autoAdd} className="p-1 border-1 bg-emerald-600 text-l text-gray-100 rounded-xl ">Auto add details</button>
+                </div>
                 {error && <p className="text-sm text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{error}</p>}
                 <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
