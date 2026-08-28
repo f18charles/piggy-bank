@@ -92,7 +92,7 @@ const Welcome = () => {
                         </h1>
 
                         <p className="mt-6 text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed">
-                            Take command of your financial journey. Track multi-currency accounts across M-Pesa, NCBA, and cash, enforce smart category budgets, reach milestone savings goals, and visualize monthly spending habits in real time.
+                            Take command of your financial journey. Track balances across bank, mobile money, and cash accounts, enforce smart category budgets, reach milestone savings goals, and visualize monthly spending habits in real time.
                         </p>
 
                         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -230,7 +230,7 @@ const Welcome = () => {
                             </div>
                             <h3 className="text-lg font-bold text-gray-900 mb-2">Multi-Account Management</h3>
                             <p className="text-sm text-gray-600 leading-relaxed">
-                                Seamlessly track balances across NCBA Bank accounts, M-Pesa mobile wallets, and physical cash drawers in one consolidated dashboard.
+                                Organise and track balances across bank accounts, mobile money wallets, and physical cash — all in one consolidated view.
                             </p>
                         </div>
 
