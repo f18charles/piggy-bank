@@ -2,13 +2,13 @@ import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "./Useauth";
 
 const ProtectedRoute = () => {
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated } = useAuth();
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />
+        return <Navigate to="/welcome" replace />;
     }
 
-    return <Outlet />
-}
+    return <Outlet />;
+};
 
 export default ProtectedRoute;
