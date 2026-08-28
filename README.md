@@ -2,7 +2,7 @@
 
 > **A modern, self-hosted personal finance platform built with Go, Gin, PostgreSQL, and React.**
 
-Piggy Bank gives you complete control and visibility over your personal finances. Track multi-currency accounts across **NCBA Bank**, **M-Pesa**, and **Cash**, enforce category budgets, track savings milestone goals, and analyze monthly spending burn rates — all within a fast, responsive web interface.
+Piggy Bank gives you complete control and visibility over your personal finances. Track multi-currency accounts across **Banks**, **M-Pesa**, and **Cash**, etc, analyze monthly spending burn rates — all within a fast, responsive web interface.
 
 ---
 
