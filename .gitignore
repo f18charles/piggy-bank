@@ -26,3 +26,4 @@ lib
 app.db
 .gitignore
 CLAUDE.md
+node_modules
