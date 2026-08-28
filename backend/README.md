@@ -1,10 +1,10 @@
-# 🐷 Piggy Bank — Backend API
+# Piggy Bank — Backend API
 
 A high-performance RESTful API server for the **Piggy Bank** personal finance platform, built with **Go**, **Gin**, **GORM**, and **PostgreSQL**.
 
 ---
 
-## 🏛 Architecture & Design
+## Architecture & Design
 
 The backend follows a strict **Layered Clean Architecture** pattern ensuring clean separation of concerns, testability, and maintainability:
 
@@ -56,11 +56,11 @@ The backend follows a strict **Layered Clean Architecture** pattern ensuring cle
 
 ---
 
-## 🚀 API Endpoints Overview
+## API Endpoints Overview
 
 Base path: `/api/v1`
 
-### 🔐 Authentication (`/api/v1/auth`)
+### Authentication (`/api/v1/auth`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `POST` | `/auth/register` | Register a new user | No |
@@ -69,7 +69,7 @@ Base path: `/api/v1`
 | `POST` | `/auth/logout` | Revoke active session tokens | Yes |
 | `GET` | `/auth/profile` | Get current authenticated user profile | Yes |
 
-### 💳 Accounts (`/api/v1/accounts`)
+### Accounts (`/api/v1/accounts`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/accounts` | List all accounts with balances | Yes |
@@ -78,7 +78,7 @@ Base path: `/api/v1`
 | `PATCH` | `/accounts/:id` | Update account name or attributes | Yes |
 | `DELETE` | `/accounts/:id` | Soft delete an account | Yes |
 
-### 💸 Transactions (`/api/v1/transactions`)
+### Transactions (`/api/v1/transactions`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/transactions` | List transactions with filters (type, category, account, dates) | Yes |
@@ -88,7 +88,7 @@ Base path: `/api/v1`
 | `PATCH` | `/transactions/:id` | Update transaction record | Yes |
 | `DELETE` | `/transactions/:id` | Remove a transaction | Yes |
 
-### 🏷 Categories (`/api/v1/categories`)
+### Categories (`/api/v1/categories`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/categories` | List user & system categories | Yes |
@@ -96,7 +96,7 @@ Base path: `/api/v1`
 | `PATCH` | `/categories/:id` | Update category name / icon | Yes |
 | `DELETE` | `/categories/:id` | Delete a category | Yes |
 
-### 📊 Budgets (`/api/v1/budgets`)
+### Budgets (`/api/v1/budgets`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/budgets` | List monthly budgets with current spending progress | Yes |
@@ -105,7 +105,7 @@ Base path: `/api/v1`
 | `PATCH` | `/budgets/:id` | Update budget target limit | Yes |
 | `DELETE` | `/budgets/:id` | Delete a budget | Yes |
 
-### 🎯 Savings Goals (`/api/v1/goals`)
+### Savings Goals (`/api/v1/goals`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/goals` | List all savings goals and progress | Yes |
@@ -116,7 +116,7 @@ Base path: `/api/v1`
 | `POST` | `/goals/:id/contribute`| Add funds to a goal from an account | Yes |
 | `POST` | `/goals/:id/withdraw`  | Withdraw funds from a goal to an account | Yes |
 
-### 📈 Insights & Overview (`/api/v1/insights`)
+### Insights & Overview (`/api/v1/insights`)
 | Method | Path | Description | Protected |
 |---|---|---|:---:|
 | `GET` | `/insights/overview` | Aggregated dashboard overview (Net Worth, Burn Rate, Health) | Yes |
@@ -126,7 +126,7 @@ Base path: `/api/v1`
 
 ---
 
-## 🛠 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Go 1.21+**
@@ -166,7 +166,7 @@ The server will start on `http://localhost:8080` (or your configured `PORT`).
 
 ---
 
-## 🧪 Testing & Code Quality
+## Testing & Code Quality
 
 Run tests and linting via `Makefile`:
 

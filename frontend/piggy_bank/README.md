@@ -1,22 +1,22 @@
-# 🐷 Piggy Bank — Frontend Web Application
+# Piggy Bank — Frontend Web Application
 
 The official web frontend for **Piggy Bank**, built with **React 19**, **Vite**, **Tailwind CSS v4**, and **React Router v7**.
 
 ---
 
-## ✨ Features & Pages
+## Features & Pages
 
-- **🌟 Welcome Landing Page (`/welcome`)**: Modern, high-converting overview of PiggyBank features, architecture, and workflow with instant navigation to sign in.
-- **📊 Interactive Dashboard (`/`)**: Consolidated view of Net Worth, monthly burn rate meter, multi-account summaries, budget health indicators, and savings goal progress.
-- **💳 Accounts Management (`/accounts`)**: Real-time management and tracking of bank accounts (e.g. NCBA), mobile wallets (M-Pesa), and physical cash holdings.
-- **📑 Smart Budgeting (`/budget`)**: Monthly category caps with spending visual progress bars and burn rate warnings.
-- **🎯 Milestone Savings Goals (`/goals`)**: Track target savings deadlines, log manual contributions/withdrawals, and monitor milestone completion.
-- **💸 Transactions & CSV Export (`/transactions`)**: Comprehensive ledger of income, expense, and transfer operations with filtering and CSV export.
-- **🔐 Secure Authentication (`/login`)**: JWT-based session management with automatic refresh token rotation and client-side protection.
+- **Welcome Landing Page (`/welcome`)**: Modern, high-converting overview of PiggyBank features, architecture, and workflow with instant navigation to sign in.
+- **Interactive Dashboard (`/`)**: Consolidated view of Net Worth, monthly burn rate meter, multi-account summaries, budget health indicators, and savings goal progress.
+- **Accounts Management (`/accounts`)**: Real-time management and tracking of bank accounts (e.g. NCBA), mobile wallets (M-Pesa), and physical cash holdings.
+- **Smart Budgeting (`/budget`)**: Monthly category caps with spending visual progress bars and burn rate warnings.
+- **Milestone Savings Goals (`/goals`)**: Track target savings deadlines, log manual contributions/withdrawals, and monitor milestone completion.
+- **Transactions & CSV Export (`/transactions`)**: Comprehensive ledger of income, expense, and transfer operations with filtering and CSV export.
+- **Secure Authentication (`/login`)**: JWT-based session management with automatic refresh token rotation and client-side protection.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -28,7 +28,7 @@ The official web frontend for **Piggy Bank**, built with **React 19**, **Vite**,
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 src/
@@ -56,7 +56,7 @@ src/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js 18+**
@@ -88,7 +88,7 @@ The app will be available at `http://localhost:5173`.
 
 ---
 
-## 📦 Build & Production
+## Build & Production
 
 ```bash
 # Build production bundle

@@ -1,4 +1,4 @@
-# 🐷 Piggy Bank
+# Piggy Bank
 
 > **A modern, self-hosted personal finance platform built with Go, Gin, PostgreSQL, and React.**
 
@@ -6,42 +6,42 @@ Piggy Bank gives you complete control and visibility over your personal finances
 
 ---
 
-## 🌟 Key Features & Actual Look
+## Key Features & Overview
 
-### 1. 🚀 Welcome & Landing Experience (`/welcome`)
+### 1. Welcome & Landing Experience (`/welcome`)
 - Clean, modern introduction to PiggyBank's core capabilities, layered architecture, and workflow.
 - Quick navigation into the dashboard or authentication flow.
 
-### 2. 📊 Consolidated Financial Dashboard (`/`)
+### 2. Consolidated Financial Dashboard (`/`)
 - **Total Net Worth Tracker**: Real-time aggregated balance across all active accounts with month-over-month growth.
 - **Monthly Burn Rate Meter**: Live spending progress bar and visual burn health against overall monthly budgets.
 - **Accounts Snapshot**: Instant status of Bank, M-Pesa, and Cash balances.
 - **Budget Health & Goal Progress**: High-level visual cards summarizing ongoing goals and category budgets.
 
-### 3. 💳 Multi-Account Management (`/accounts`)
+### 3. Multi-Account Management (`/accounts`)
 - Create and organize accounts by type: **Bank (NCBA)**, **Mobile Money (M-Pesa)**, and **Cash**.
 - Live balance tracking, account details, and quick deposit/withdrawal recording.
 
-### 4. 📑 Smart Category Budgeting (`/budget`)
+### 4. Smart Category Budgeting (`/budget`)
 - Set custom monthly spending thresholds for each spending category.
 - Visual progress meters indicating percentage spent and warning indicators when approaching or exceeding limits.
 
-### 5. 🎯 Milestone Savings Goals (`/goals`)
+### 5. Milestone Savings Goals (`/goals`)
 - Create financial targets with specific deadline dates and target amounts (e.g. Emergency Fund, Travel, Tech).
 - Direct contributions and withdrawals linked to your accounts with automated percentage progress tracking.
 
-### 6. 💸 Detailed Transaction Ledger & CSV Export (`/transactions`)
+### 6. Detailed Transaction Ledger & CSV Export (`/transactions`)
 - Record income, expenses, and inter-account transfers with timestamps, categories, payment methods, and notes.
 - Granular search and filtering by date range, account, and category.
 - **One-click CSV export** of transaction logs for external analysis.
 
-### 7. 🔐 Bank-Grade Auth & Security
+### 7. Bank-Grade Auth & Security
 - Secure JWT authentication with short-lived access tokens and refresh token rotation.
 - SHA-256 token revocation store and bcrypt password hashing.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology | Details |
 |---|---|---|
@@ -55,7 +55,7 @@ Piggy Bank gives you complete control and visibility over your personal finances
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 piggy-bank/
@@ -91,7 +91,7 @@ piggy-bank/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Go 1.21+**
@@ -140,7 +140,7 @@ The web application will be available at `http://localhost:5173`.
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 ### Backend (`backend/.env`)
 | Variable | Description | Default |
@@ -159,15 +159,15 @@ The web application will be available at `http://localhost:5173`.
 
 ---
 
-## 📖 Sub-Package Documentation
+## Documentation Links
 
-- 📄 [**Backend API & Architecture Guide**](./backend/README.md)
-- 📄 [**Frontend Web App Guide**](./frontend/piggy_bank/README.md)
-- 📄 [**Internal Architecture Specification**](./backend/internal/README.md)
-- 📄 [**Project Specification (PROJECT.md)**](./docs/PROJECT.md)
+- [Backend API & Architecture Guide](./backend/README.md)
+- [Frontend Web App Guide](./frontend/piggy_bank/README.md)
+- [Internal Architecture Specification](./backend/internal/README.md)
+- [Project Specification (PROJECT.md)](./docs/PROJECT.md)
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License — see the [LICENSE.md](./LICENSE.md) file for details.

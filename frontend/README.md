@@ -1,4 +1,4 @@
-# 🐷 Piggy Bank — Frontend
+# Piggy Bank — Frontend
 
 The web frontend for Piggy Bank is located in the [`piggy_bank/`](./piggy_bank) directory.
 
