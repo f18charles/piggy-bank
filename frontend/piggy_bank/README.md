@@ -1,16 +1,102 @@
-# React + Vite
+# 🐷 Piggy Bank — Frontend Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The official web frontend for **Piggy Bank**, built with **React 19**, **Vite**, **Tailwind CSS v4**, and **React Router v7**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features & Pages
 
-## React Compiler
+- **🌟 Welcome Landing Page (`/welcome`)**: Modern, high-converting overview of PiggyBank features, architecture, and workflow with instant navigation to sign in.
+- **📊 Interactive Dashboard (`/`)**: Consolidated view of Net Worth, monthly burn rate meter, multi-account summaries, budget health indicators, and savings goal progress.
+- **💳 Accounts Management (`/accounts`)**: Real-time management and tracking of bank accounts (e.g. NCBA), mobile wallets (M-Pesa), and physical cash holdings.
+- **📑 Smart Budgeting (`/budget`)**: Monthly category caps with spending visual progress bars and burn rate warnings.
+- **🎯 Milestone Savings Goals (`/goals`)**: Track target savings deadlines, log manual contributions/withdrawals, and monitor milestone completion.
+- **💸 Transactions & CSV Export (`/transactions`)**: Comprehensive ledger of income, expense, and transfer operations with filtering and CSV export.
+- **🔐 Secure Authentication (`/login`)**: JWT-based session management with automatic refresh token rotation and client-side protection.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Technology | Purpose |
+|---|---|
+| **React 19** | Modern UI components and reactive state |
+| **Vite** | Fast build tooling and Hot Module Replacement (HMR) |
+| **Tailwind CSS v4** | Utility-first, responsive design system |
+| **React Router v7** | Declarative client-side routing and protected route guards |
+| **React Icons** | Clean icon set (Material Design) |
+
+---
+
+## 📁 Directory Structure
+
+```
+src/
+├── assets/             # Brand logos, icons, and static images
+├── components/         # Reusable UI components
+│   ├── Accounts/       # Account creation modal & account cards
+│   ├── Budgets/        # Budget modals, cards, and progress meters
+│   ├── Dashboard/      # Net worth, burn rate, and overview cards
+│   ├── Goals/          # Goal creation, deposit/withdraw modals
+│   ├── Layout/         # Header, Sidebar drawer, and Main layout
+│   └── Transactions/   # Transaction modals, filters, and tables
+├── pages/              # Application views / routes
+│   ├── auth/           # Login view
+│   ├── Accounts.jsx    # Accounts page
+│   ├── Budgets.jsx     # Budgets page
+│   ├── Dashboard.jsx   # Dashboard page
+│   ├── Goals.jsx       # Goals page
+│   ├── Transactions.jsx# Transactions page
+│   └── Welcome.jsx     # Welcome / Landing page
+├── styles/             # Global CSS and Tailwind directives
+└── utils/              # Client API helper, auth context, and token storage
+    ├── auth/           # AuthProvider, ProtectedRoute, and session handlers
+    └── Client.js       # Fetch wrapper with interceptors & auto-refresh
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js 18+**
+- **npm** or **pnpm** / **yarn**
+
+### 1. Installation
+Navigate to the frontend directory and install dependencies:
+```bash
+cd frontend/piggy_bank
+npm install
+```
+
+### 2. Environment Configuration
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+
+Ensure `VITE_API_URL` points to your backend server:
+```env
+VITE_API_URL=http://localhost:8080/api/v1
+```
+
+### 3. Running Development Server
+```bash
+npm run dev
+```
+The app will be available at `http://localhost:5173`.
+
+---
+
+## 📦 Build & Production
+
+```bash
+# Build production bundle
+npm run build
+
+# Preview production build locally
+npm run preview
+
+# Run ESLint checks
+npm run lint
+```
