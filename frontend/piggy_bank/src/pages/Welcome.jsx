@@ -9,12 +9,9 @@ import {
     MdSecurity,
     MdAnalytics,
     MdArrowForward,
-    MdCheckCircle,
-    MdSmartphone,
-    MdSavings,
-    MdFileDownload,
-    MdOutlinePieChart
+    MdCheckCircle
 } from "react-icons/md";
+
 
 const Welcome = () => {
     const { isAuthenticated, user } = useAuth();
