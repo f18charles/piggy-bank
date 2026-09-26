@@ -20,11 +20,16 @@ func InitRevocation(db *gorm.DB) {
 }
 
 func RevokeRefreshToken(tokenString string) error {
+	return RevokeToken(tokenString)
+}
+
+// RevokeToken extracts the JTI claim and marks the token as blacklisted.
+func RevokeToken(tokenString string) error {
 	if blacklist == nil {
 		return errors.New("revocation store not initialized")
 	}
 
-	claims, err := ValidateRefreshToken(tokenString)
+	claims, err := parseToken(tokenString)
 	if err != nil {
 		return nil
 	}
@@ -34,21 +39,32 @@ func RevokeRefreshToken(tokenString string) error {
 		return errors.New("token missing jti claim")
 	}
 
+	expiresAt := time.Now().Add(24 * time.Hour)
+	if claims.ExpiresAt != nil {
+		expiresAt = claims.ExpiresAt.Time
+	}
+
 	entry := &BlacklistedToken{
 		JTI:       jti,
-		ExpiresAt: claims.ExpiresAt.Time,
+		ExpiresAt: expiresAt,
 	}
 
 	return blacklist.Create(entry).Error
 }
 
-func IsRevocked(jti string) bool {
+// IsRevoked checks whether the given token JTI is in the blacklist.
+func IsRevoked(jti string) bool {
 	if blacklist == nil || jti == "" {
 		return false
 	}
 	var count int64
 	blacklist.Model(&BlacklistedToken{}).Where("jti = ? AND expires_at > ?", jti, time.Now()).Count(&count)
 	return count > 0
+}
+
+// IsRevocked is kept for backward-compatibility.
+func IsRevocked(jti string) bool {
+	return IsRevoked(jti)
 }
 
 func StartBlacklistPruner() {
@@ -62,3 +78,4 @@ func StartBlacklistPruner() {
 		}
 	}()
 }
+

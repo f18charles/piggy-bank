@@ -4,6 +4,7 @@ import (
 	"log"
 
 	api "github.com/f18charles/piggy-bank/backend/internal/api/router"
+	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/f18charles/piggy-bank/backend/internal/database"
 	"github.com/f18charles/piggy-bank/backend/internal/utils"
@@ -15,6 +16,12 @@ func main() {
 
 	// Connect to database
 	database.Connect()
+
+	// Initialize token blacklist and pruner
+	if database.DB != nil {
+		auth.InitRevocation(database.DB)
+		auth.StartBlacklistPruner()
+	}
 
 	// setup logger
 	utils.InitLogger(config.App.AppEnv)

@@ -104,6 +104,9 @@ func ValidateAccessToken(tokenString string) (*Claims, error) {
 	if claims.TokenType != TokenTypeAccess {
 		return nil, errors.New("not an access token")
 	}
+	if claims.ID != "" && IsRevoked(claims.ID) {
+		return nil, errors.New("token has been revoked")
+	}
 	return claims, nil
 }
 
@@ -117,6 +120,9 @@ func ValidateRefreshToken(tokenString string) (*Claims, error) {
 	if claims.TokenType != TokenTypeRefresh {
 		return nil, errors.New("not a refresh token")
 	}
+	if claims.ID != "" && IsRevoked(claims.ID) {
+		return nil, errors.New("refresh token has been revoked")
+	}
 	return claims, nil
 }
 
@@ -127,6 +133,7 @@ func generateToken(userID uuid.UUID, tokenType string, duration time.Duration) (
 		UserID:    userID,
 		TokenType: tokenType,
 		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        uuid.New().String(),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},

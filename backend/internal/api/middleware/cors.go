@@ -3,21 +3,27 @@ package middleware
 import (
 	"net/http"
 	"os"
+	"strings"
 
-	// "github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/gin-gonic/gin"
 )
 
-// CORS returns a middleware that sets permissive CORS headers suitable for
-// the frontend dev environment. It short-circuits OPTIONS requests with 204.
+// CORS returns a middleware that sets appropriate CORS headers.
+// It prevents wildcard Access-Control-Allow-Origin when credentials are enabled.
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		origin := getAllowedOrigin(c.GetHeader("Origin"))
+		reqOrigin := c.GetHeader("Origin")
+		allowedOrigin, allowCredentials := resolveAllowedOrigin(reqOrigin)
 
-		c.Header("Access-Control-Allow-Origin", origin)
-		c.Header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Origin, Content-type, Authorization")
-		c.Header("Access-Control-Allow-Credentials", "true")
+		if allowedOrigin != "" {
+			c.Header("Access-Control-Allow-Origin", allowedOrigin)
+		}
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, X-Requested-With")
+		
+		if allowCredentials {
+			c.Header("Access-Control-Allow-Credentials", "true")
+		}
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
@@ -28,12 +34,33 @@ func CORS() gin.HandlerFunc {
 	}
 }
 
-func getAllowedOrigin(requestOrigin string) string {
-	if envOrigin := os.Getenv("ALLOWED_ORIGIN"); envOrigin != "" {
-		return envOrigin
+func resolveAllowedOrigin(requestOrigin string) (string, bool) {
+	envOrigin := os.Getenv("ALLOWED_ORIGIN")
+	if envOrigin == "" {
+		if requestOrigin != "" {
+			return requestOrigin, true
+		}
+		return "http://localhost:5173", true
 	}
-	if requestOrigin != "" {
-		return requestOrigin
+
+	if envOrigin == "*" {
+		if requestOrigin != "" {
+			return requestOrigin, true
+		}
+		return "*", false
 	}
-	return "*"
+
+	origins := strings.Split(envOrigin, ",")
+	for _, o := range origins {
+		trimmed := strings.TrimSpace(o)
+		if trimmed == requestOrigin {
+			return requestOrigin, true
+		}
+	}
+
+	if requestOrigin == "" && len(origins) > 0 {
+		return strings.TrimSpace(origins[0]), true
+	}
+
+	return strings.TrimSpace(origins[0]), true
 }
