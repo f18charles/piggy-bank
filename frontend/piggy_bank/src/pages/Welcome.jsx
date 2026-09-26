@@ -60,7 +60,7 @@ const Welcome = () => {
                                     Log In
                                 </Link>
                                 <Link
-                                    to="/login"
+                                    to="/register"
                                     className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-sm font-semibold shadow-md shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all transform hover:-translate-y-0.5"
                                 >
                                     <span>Get Started</span>
@@ -97,10 +97,10 @@ const Welcome = () => {
 
                         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link
-                                to={isAuthenticated ? "/" : "/login"}
+                                to={isAuthenticated ? "/" : "/register"}
                                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/40 transition-all transform hover:-translate-y-0.5"
                             >
-                                <span>{isAuthenticated ? `Welcome back, ${user?.full_name || "User"}` : "Launch Dashboard"}</span>
+                                <span>{isAuthenticated ? `Welcome back, ${user?.full_name || "User"}` : "Get Started Now"}</span>
                                 <MdArrowForward className="w-5 h-5" />
                             </Link>
                             <a
@@ -384,7 +384,7 @@ const Welcome = () => {
                     </p>
                     <div className="mt-8 flex justify-center">
                         <Link
-                            to={isAuthenticated ? "/" : "/login"}
+                            to={isAuthenticated ? "/" : "/register"}
                             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white hover:bg-gray-100 text-emerald-900 font-bold text-base shadow-xl shadow-emerald-950/20 transition-all transform hover:-translate-y-0.5"
                         >
                             <span>{isAuthenticated ? "Enter PiggyBank Dashboard" : "Get Started Now"}</span>

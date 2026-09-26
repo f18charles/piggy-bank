@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { apiPost } from "../Client";
 import { AuthContext } from "./Authcontextobject";
 
@@ -17,14 +17,28 @@ const AuthProvider = ({ children }) => {
     const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem("refreshToken"))
     const [user, setUser] = useState(readStoredUser)
 
-    const persistSession = ({access_token: accessToken, refresh_token: refreshToken, user}) => {
-        localStorage.setItem("accessToken", accessToken)
-        localStorage.setItem("refreshToken", refreshToken)
-        localStorage.setItem("user", JSON.stringify(user))
+    useEffect(() => {
+        const handleTokensRefreshed = (e) => {
+            if (e.detail?.access_token) {
+                setAccessToken(e.detail.access_token)
+            }
+            if (e.detail?.refresh_token) {
+                setRefreshToken(e.detail.refresh_token)
+            }
+        }
 
-        setAccessToken(accessToken)
-        setRefreshToken(refreshToken)
-        setUser(user)
+        window.addEventListener("auth:tokensRefreshed", handleTokensRefreshed)
+        return () => window.removeEventListener("auth:tokensRefreshed", handleTokensRefreshed)
+    }, [])
+
+    const persistSession = ({ access_token, refresh_token, user }) => {
+        if (access_token) localStorage.setItem("accessToken", access_token)
+        if (refresh_token) localStorage.setItem("refreshToken", refresh_token)
+        if (user) localStorage.setItem("user", JSON.stringify(user))
+
+        if (access_token) setAccessToken(access_token)
+        if (refresh_token) setRefreshToken(refresh_token)
+        if (user) setUser(user)
     }
 
     const clearSession = () => {
@@ -43,9 +57,21 @@ const AuthProvider = ({ children }) => {
         return data.user
     }
 
+    const register = async (email, password, fullName, currency = "KES") => {
+        const data = await apiPost("/auth/register", {
+            email,
+            password,
+            full_name: fullName,
+            currency
+        }, { auth: false })
+        persistSession(data)
+        return data.user
+    }
+
     const logout = async () => {
         try {
-            await apiPost("/auth/logout")
+            const currentRefreshToken = refreshToken || localStorage.getItem("refreshToken")
+            await apiPost("/auth/logout", { refresh_token: currentRefreshToken })
         } catch {
             // Ignore errors on logout
         }
@@ -58,6 +84,7 @@ const AuthProvider = ({ children }) => {
         refreshToken,
         isAuthenticated: Boolean(accessToken),
         login,
+        register,
         logout,
     }
     

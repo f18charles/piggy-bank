@@ -22,18 +22,22 @@ const refreshAccessToken = async () => {
 
     const res = await fetch(`${BASE_URL}/auth/refresh`, {
         method: "POST",
-        headers: {"Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh_token: refreshToken })
     })
 
     const json = await res.json().catch(() => null)
 
-    if (!res.ok) {
+    if (!res.ok || !json?.data?.access_token) {
         throw new Error("Failed to refresh access token")
     }
 
     localStorage.setItem("accessToken", json.data.access_token)
-    localStorage.setItem("refreshToken", json.data.refresh_token)
+    if (json.data.refresh_token) {
+        localStorage.setItem("refreshToken", json.data.refresh_token)
+    }
+
+    window.dispatchEvent(new CustomEvent("auth:tokensRefreshed", { detail: json.data }))
 }
 
 const request = async (path, { method = "GET", body, auth = true } = {}) => {
