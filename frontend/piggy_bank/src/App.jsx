@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import './styles/App.css'
 import ProtectedRoute from './utils/auth/Protectedroute'
 import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
 import Welcome from './pages/Welcome'
 import Accounts from './pages/Accounts'
 import Budgets from './pages/Budgets'
@@ -16,6 +17,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>

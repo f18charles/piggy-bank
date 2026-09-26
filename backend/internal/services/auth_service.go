@@ -86,13 +86,16 @@ func (as *AuthService) LoginUser(req LoginRequest) (*models.User, *auth.TokenPai
 }
 
 // RefreshTokens validates a refresh token and issues a fresh token pair.
-// The old refresh token is implicitly invalidated because the frontend
-// replaces it with the new one.
+// The old refresh token is revoked to enforce one-time usage rotation.
 func (as *AuthService) RefreshTokens(refreshToken string) (*auth.TokenPair, error) {
 	claims, err := auth.ValidateRefreshToken(refreshToken)
 	if err != nil {
 		return nil, utils.ErrUnauthorized
 	}
+
+	// Revoke old refresh token so it cannot be re-used
+	_ = auth.RevokeRefreshToken(refreshToken)
+
 	return auth.GenerateTokenPair(claims.UserID)
 }
 

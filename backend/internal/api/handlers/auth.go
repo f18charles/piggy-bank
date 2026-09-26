@@ -8,7 +8,9 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"strings"
 
+	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/services"
 	"github.com/f18charles/piggy-bank/backend/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -112,8 +114,23 @@ func (ah *AuthHandler) Refresh(c *gin.Context) {
 	})
 }
 
-// Logout handles POST /auth/logout — client just discards both tokens.
+// Logout handles POST /auth/logout — invalidates refresh token and access token on server.
 func (ah *AuthHandler) Logout(c *gin.Context) {
+	var body struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	_ = c.ShouldBindJSON(&body)
+
+	if body.RefreshToken != "" {
+		_ = auth.RevokeRefreshToken(body.RefreshToken)
+	}
+
+	authHeader := c.GetHeader("Authorization")
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) == 2 && parts[0] == "Bearer" {
+		_ = auth.RevokeToken(parts[1])
+	}
+
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "logged out successfully"})
 }
 

@@ -3,20 +3,16 @@ import useAuth from "../../utils/auth/Useauth";
 import { useState } from "react";
 import brand from "../../assets/piggybank.png";
 
-const Login = () => {
+const Register = () => {
+    const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [currency, setCurrency] = useState("KES");
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { login } = useAuth();
+    const { register } = useAuth();
     const navigate = useNavigate();
-
-    const autoAdd = (e) => {
-        e.preventDefault();
-        setEmail("demo@email.com");
-        setPassword("demo1234");
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,10 +21,10 @@ const Login = () => {
         setIsSubmitting(true);
 
         try {
-            await login(email, password);
+            await register(email, password, fullName, currency);
             navigate("/");
         } catch (err) {
-            setError(err.message || "Failed to log in");
+            setError(err.message || "Failed to create account");
         } finally {
             setIsSubmitting(false);
         }
@@ -36,7 +32,7 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-emerald-50/40 p-4">
-            <div className="w-full max-w-sm">
+            <div className="w-full max-w-md">
                 {/* Brand Header */}
                 <div className="text-center mb-6">
                     <Link to="/welcome" className="inline-flex items-center gap-2 group">
@@ -49,7 +45,7 @@ const Login = () => {
                             PiggyBank
                         </span>
                     </Link>
-                    <p className="text-xs text-gray-500 mt-1">Sign in to your personal finance dashboard</p>
+                    <p className="text-xs text-gray-500 mt-1">Start tracking your personal finances today</p>
                 </div>
 
                 <form
@@ -57,32 +53,28 @@ const Login = () => {
                     className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 sm:p-8 space-y-4"
                 >
                     <h1 className="text-xl font-bold text-gray-800">
-                        Welcome Back
+                        Create Your Account
                     </h1>
-
-                    {/* Demo Account Credentials Helper */}
-                    <div className="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200/60 shadow-xs text-xs flex flex-col gap-2 text-emerald-950">
-                        <p className="font-medium text-emerald-900">
-                            Demo account credentials:
-                        </p>
-                        <div className="space-y-0.5 font-mono text-[11px] text-gray-700 bg-white/70 p-2 rounded-lg border border-emerald-100">
-                            <p><strong className="text-emerald-800 font-sans">Email:</strong> demo@email.com</p>
-                            <p><strong className="text-emerald-800 font-sans">Password:</strong> demo1234</p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={autoAdd}
-                            className="mt-1 py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-xs transition-colors cursor-pointer text-center"
-                        >
-                            Auto-fill Demo Credentials
-                        </button>
-                    </div>
 
                     {error && (
                         <p className="text-sm text-rose-600 bg-rose-50 border border-rose-200/60 rounded-lg px-3 py-2">
                             {error}
                         </p>
                     )}
+
+                    <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                            Full Name
+                        </label>
+                        <input
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            required
+                            placeholder="Jane Doe"
+                            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                        />
+                    </div>
 
                     <div>
                         <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
@@ -93,38 +85,57 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            placeholder="user@example.com"
+                            placeholder="jane@example.com"
                             className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="••••••••"
-                            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                        />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={6}
+                                placeholder="••••••••"
+                                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
+                                Base Currency
+                            </label>
+                            <select
+                                value={currency}
+                                onChange={(e) => setCurrency(e.target.value)}
+                                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                            >
+                                <option value="KES">KES (KSh)</option>
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-2.5 shadow-md shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all cursor-pointer"
+                        className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-2.5 shadow-md shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all cursor-pointer"
                     >
-                        {isSubmitting ? "Signing in..." : "Sign In"}
+                        {isSubmitting ? "Creating Account..." : "Create Account"}
                     </button>
 
                     <div className="text-center pt-2">
                         <p className="text-xs text-gray-500">
-                            Don't have an account?{" "}
-                            <Link to="/register" className="font-semibold text-emerald-700 hover:text-emerald-800 transition-colors">
-                                Sign Up
+                            Already have an account?{" "}
+                            <Link to="/login" className="font-semibold text-emerald-700 hover:text-emerald-800 transition-colors">
+                                Sign In
                             </Link>
                         </p>
                     </div>
@@ -140,4 +151,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
