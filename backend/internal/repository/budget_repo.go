@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/f18charles/piggy-bank/backend/internal/models"
 	"github.com/f18charles/piggy-bank/backend/internal/utils"
@@ -54,4 +55,20 @@ func (br *BudgetRepo) DeleteBudget(budget_id uuid.UUID) error {
 		return result.Error
 	}
 	return nil
+}
+
+// SumCategoryExpenses totals the user's expense transactions for a category
+// in the half-open window [start, end). Used to compute budget spending
+// dynamically instead of maintaining a stored accumulator.
+func (br *BudgetRepo) SumCategoryExpenses(user_id, category_id uuid.UUID, start, end time.Time) (float64, error) {
+	var total float64
+	err := br.db.Model(&models.Transaction{}).
+		Where("user_id = ? AND category_id = ? AND type = ? AND transaction_date >= ? AND transaction_date < ?",
+			user_id, category_id, "expense", start, end).
+		Select("COALESCE(SUM(amount), 0)").
+		Scan(&total).Error
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
