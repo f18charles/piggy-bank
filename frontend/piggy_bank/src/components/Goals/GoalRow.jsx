@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import GoalGrowthChart from './GoalGrowthChart'
 
 const getProgressColor = (percentage) => {
     if (percentage >= 100) return 'bg-emerald-500'
@@ -176,6 +177,10 @@ const GoalRow = ({ goal, onEdit, onDelete, onContribute, onWithdraw, isDeleting 
                             <p className="text-xs text-gray-400">Current Amount</p>
                             <p className="font-medium text-gray-700">{formatCurrency(goal.current_amount)}</p>
                         </div>
+                    </div>
+                    <div className="mt-4">
+                        <p className="text-xs text-gray-400 mb-1">Savings growth</p>
+                        <GoalGrowthChart goalId={goal.id} />
                     </div>
                 </div>
             )}

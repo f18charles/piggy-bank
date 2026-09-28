@@ -10,6 +10,7 @@ import Accounts from './pages/Accounts'
 import Budgets from './pages/Budgets'
 import Goals from './pages/Goals'
 import Transactions from './pages/Transactions'
+import Recurring from './pages/Recurring'
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                     <Route path="budget" element={<Budgets />} />
                     <Route path="goals" element={<Goals />} />
                     <Route path="transactions" element={<Transactions />} />
+                    <Route path="recurring" element={<Recurring />} />
                 </Route>
             </Route>
 
