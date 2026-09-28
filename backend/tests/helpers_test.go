@@ -52,6 +52,8 @@ func setupTestDB(t *testing.T) *gorm.DB {
 		&models.Transaction{},
 		&models.Budget{},
 		&models.Goal{},
+		&models.RecurringTransaction{},
+		&models.NetWorthSnapshot{},
 	)
 	require.NoError(t, err, "failed to run migrations on test database")
 
