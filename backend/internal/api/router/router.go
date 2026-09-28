@@ -31,11 +31,8 @@ func SetupRouter() *gin.Engine {
 	goalHandler := handlers.NewGoalHandler(db)
 	budgetHandler := handlers.NewBudgetHandler(db)
 	categoryHandler := handlers.NewCategoryHandler(db)
-	summaryHandler := handlers.NewSummaryHandler(db)
-	overviewHandler := handlers.NewOverviewHandler(db)
-	spendingInsightsHandler := handlers.NewSpendingInsightsHandler(db)
+summaryHandler := handlers.NewSummaryHandler(db)
 	recurringHandler := handlers.NewRecurringHandler(db)
-	netWorthHandler := handlers.NewNetWorthHandler(db)
 
 	// public routes
 	auth := v1.Group("/auth")
