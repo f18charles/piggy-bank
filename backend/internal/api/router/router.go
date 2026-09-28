@@ -34,6 +34,8 @@ func SetupRouter() *gin.Engine {
 	summaryHandler := handlers.NewSummaryHandler(db)
 	overviewHandler := handlers.NewOverviewHandler(db)
 	spendingInsightsHandler := handlers.NewSpendingInsightsHandler(db)
+	recurringHandler := handlers.NewRecurringHandler(db)
+	netWorthHandler := handlers.NewNetWorthHandler(db)
 
 	// public routes
 	auth := v1.Group("/auth")
@@ -61,6 +63,7 @@ func SetupRouter() *gin.Engine {
 		// Transactions
 		protected.GET("/transactions", txHandler.ListTransactions)
 		protected.POST("/transactions", txHandler.CreateTransactions)
+		protected.POST("/transactions/bulk", txHandler.CreateTransactionsBulk)
 		protected.GET("/transactions/export", txHandler.ExportTransactions)
 		protected.GET("/transactions/:id", txHandler.GetTransaction)
 		protected.PATCH("/transactions/:id", txHandler.UpdateTransaction)
@@ -87,12 +90,18 @@ func SetupRouter() *gin.Engine {
 		protected.DELETE("/goals/:id", goalHandler.DeleteGoal)
 		protected.POST("/goals/:id/contribute", goalHandler.ContributeToGoal)
 		protected.POST("/goals/:id/withdraw", goalHandler.WithdrawFromGoal)
+		protected.GET("/goals/:id/history", goalHandler.GetGoalHistory)
 
-		// Summary & Insights
-		protected.GET("/insights/summary/monthly", summaryHandler.MonthlySummary)
-		protected.GET("/insights/summary/yearly", summaryHandler.YearlySummary)
-		protected.GET("/insights/overview", overviewHandler.Overview)
-		protected.GET("/insights/spending", spendingInsightsHandler.SpendingInsights)
+		// Recurring transactions
+		protected.GET("/recurring", recurringHandler.ListRecurring)
+		protected.POST("/recurring", recurringHandler.CreateRecurring)
+		protected.GET("/recurring/:id", recurringHandler.GetRecurring)
+		protected.PATCH("/recurring/:id", recurringHandler.UpdateRecurring)
+		protected.DELETE("/recurring/:id", recurringHandler.DeleteRecurring)
+
+		// Summary only
+		protected.GET("/summary/monthly", summaryHandler.MonthlySummary)
+		protected.GET("/summary/yearly", summaryHandler.YearlySummary)
 	}
 
 	return r
