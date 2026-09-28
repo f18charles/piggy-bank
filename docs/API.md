@@ -221,7 +221,38 @@ All endpoints returning JSON adhere to the standardized response envelope:
 }
 ```
 
-### 4.3 Export Transactions
+### 4.3 Update / Delete Transaction
+- `PATCH /transactions/:id` — full edit. Accepts any of `amount`, `type`,
+  `account_id`, `category_id`, `description`, `payment_method`, `reference_id`,
+  `status`, `transaction_date`, and for transfers `from_account_id`/`to_account_id`.
+  Account balances are recalculated atomically.
+- `DELETE /transactions/:id` — reverses the transaction's balance effect.
+
+### 4.4 Inter-Account Transfer
+`POST /transactions` with `type: "transfer"`:
+```json
+{
+  "type": "transfer",
+  "from_account_id": "93b0dfb2-...",
+  "to_account_id": "11ab9c50-...",
+  "amount": 5000.00,
+  "description": "Move to M-Pesa",
+  "payment_method": "mpesa",
+  "status": "completed"
+}
+```
+Debits the source and credits the destination in one DB transaction. Transfers are
+excluded from income/expense totals and budget spending.
+
+### 4.5 Bulk Ingestion
+- **Method:** `POST`
+- **Path:** `/transactions/bulk`
+- **Body:** a JSON array of transaction objects (1–500). Items whose `reference_id`
+  already exists for the user are skipped, so retried SMS/webhook deliveries are
+  idempotent.
+- **Response:** `{ "created": [...], "skipped": 0, "failed": 0 }`
+
+### 4.6 Export Transactions
 - **Method:** `GET`
 - **Path:** `/transactions/export?format=csv` (or `?format=pdf`)
 - **Response:** File stream (`text/csv` or `application/pdf`)
@@ -247,6 +278,7 @@ All endpoints returning JSON adhere to the standardized response envelope:
 - `DELETE /goals/:id` — Delete goal
 - `POST /goals/:id/contribute` — Deposit funds into goal (`account_id`, `amount`)
 - `POST /goals/:id/withdraw` — Withdraw saved funds back into account (`account_id`, `amount`)
+- `GET /goals/:id/history` — Cumulative savings growth points (`date`, `change`, `cumulative`)
 
 ---
 
@@ -256,3 +288,16 @@ All endpoints returning JSON adhere to the standardized response envelope:
 - `GET /insights/summary/monthly` — Total income, expense, and savings rate for current month
 - `GET /insights/summary/yearly` — Annual totals and month-by-month financial progression
 - `GET /insights/spending` — Category spending breakdown, burn rate percentage, and expense distribution
+- `GET /insights/net-worth?months=12` — Current net worth, month-over-month change, and daily snapshot history
+
+---
+
+## 8. Recurring Transactions
+
+Generated automatically by the backend scheduler on each due date.
+
+- `GET /recurring` — List the user's recurring templates
+- `POST /recurring` — Create (`account_id`, `amount`, `type`, `frequency`, `next_due_date`, optional `to_account_id`/`category_id`/`description`/`payment_method`/`is_active`)
+- `GET /recurring/:id` — Get one
+- `PATCH /recurring/:id` — Update (same fields; `is_active` pauses/resumes)
+- `DELETE /recurring/:id` — Delete

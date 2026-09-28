@@ -53,6 +53,9 @@ func categoryName(t models.Transaction) string {
 }
 
 func accountName(t models.Transaction) string {
+	if t.Type == "transfer" && t.FromAccount != nil && t.ToAccount != nil {
+		return t.FromAccount.Name + " → " + t.ToAccount.Name
+	}
 	if t.Account.Name != "" {
 		return t.Account.Name
 	}
@@ -152,8 +155,10 @@ func exportPDF(txs []models.Transaction) ([]byte, string, error) {
 		amount := fmt.Sprintf("%.2f", t.Amount)
 		if t.Type == "income" {
 			pdf.SetTextColor(22, 163, 74) // green
-		} else {
+		} else if t.Type == "expense" {
 			pdf.SetTextColor(220, 38, 38) // red
+		} else {
+			pdf.SetTextColor(71, 85, 105) // slate-600 for transfers
 		}
 
 		row := []string{
@@ -184,7 +189,7 @@ func exportPDF(txs []models.Transaction) ([]byte, string, error) {
 	for _, t := range txs {
 		if t.Type == "income" {
 			totalIncome += t.Amount
-		} else {
+		} else if t.Type == "expense" {
 			totalExpense += t.Amount
 		}
 	}

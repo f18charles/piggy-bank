@@ -55,3 +55,15 @@ func (gr *GoalRepo) DeleteGoal(id uuid.UUID) error {
 	}
 	return nil
 }
+
+// ListGoalTransactions returns the contribution/withdrawal transactions
+// linked to a goal, oldest first, scoped to the owner.
+func (gr *GoalRepo) ListGoalTransactions(goalID, userID uuid.UUID) ([]models.Transaction, error) {
+	txs := []models.Transaction{}
+	result := gr.db.Where("goal_id = ? AND user_id = ? AND type IN ?", goalID, userID, []string{"income", "expense"}).
+		Order("transaction_date ASC").Find(&txs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return txs, nil
+}

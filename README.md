@@ -12,7 +12,10 @@ Piggy Bank gives you complete visibility and control over your personal finances
 - **Multi-Account Management (`/accounts`)**: Track bank accounts, mobile wallets, and physical cash with real-time balance calculations.
 - **Smart Category Budgeting (`/budgets`)**: Set monthly spending limits per category with visual burn indicators and threshold warnings.
 - **Milestone Savings Goals (`/goals`)**: Create target savings deadlines, log deposits/withdrawals linked directly to your accounts, and track progress.
-- **Transaction Ledger & Data Export (`/transactions`)**: Comprehensive recording of income, expenses, and transfers with multi-criteria filtering and CSV/PDF export.
+- **Transaction Ledger & Data Export (`/transactions`)**: Comprehensive recording of income, expenses, and transfers with multi-criteria filtering, full editing, and CSV/PDF export.
+- **Inter-Account Transfers**: Move money between your own Bank/M-Pesa/Cash accounts without skewing income or expense totals.
+- **Recurring Transactions (`/recurring`)**: Schedule rent, subscriptions, or salary; the backend scheduler records them automatically on each due date.
+- **Insights & Trends (`/insights`)**: Category spending donut, anomalies, recommendations, monthly cashflow, and net-worth history.
 - **JWT Authentication & Security**: Secure token pairs, bcrypt password hashing, and user data isolation.
 
 ---

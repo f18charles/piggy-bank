@@ -16,7 +16,6 @@ type OverviewService struct {
 	db           *gorm.DB
 	overviewRepo repository.OverviewRepo
 	accountsRepo repository.AccountRepo
-	budgetsRepo  repository.BudgetRepo
 	goalsRepo    repository.GoalRepo
 	userRepo     repository.UserRepository
 }
@@ -26,7 +25,6 @@ func NewOverviewService(db *gorm.DB) *OverviewService {
 		db:           db,
 		overviewRepo: *repository.NewOverviewRepo(db),
 		accountsRepo: *repository.NewAccountRepo(db),
-		budgetsRepo:  *repository.NewBudgetRepo(db),
 		goalsRepo:    *repository.NewGoalRepo(db),
 		userRepo:     *repository.NewUserRepository(db),
 	}
@@ -73,10 +71,14 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 		})
 	}
 
+	// Month-over-month change is derived from stored daily snapshots; it is
+	// 0 until at least one prior snapshot exists (see SnapshotService).
+	netWorthChange, _ := NewSnapshotService(os.db).ChangeSince(user_id, time.Now().AddDate(0, -1, 0))
+
 	over_view.NetWorth = overview.NetWorthBrief{
 		NetWorth:         totalAssets - totalLiabilities,
 		Currency:         user.Currency,
-		ChangePercentage: 0, // TODO: needs a stored net worth history, see NetWorthBrief comment
+		ChangePercentage: netWorthChange,
 		TotalAssets:      totalAssets,
 		TotalLiabilities: totalLiabilities,
 	}
@@ -113,8 +115,8 @@ func (os *OverviewService) GetDashboardOverview(user_id uuid.UUID) (*overview.Da
 		ProjectedRunway:     projectedRunway,
 	}
 
-	// get budget health
-	budgets, err := os.budgetsRepo.ListBudgetsByUser(user_id)
+	// get budget health (spending computed dynamically per budget period)
+	budgets, err := NewBudgetService(os.db).BudgetList(user_id)
 	if err != nil {
 		return nil, err
 	}

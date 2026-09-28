@@ -4,6 +4,7 @@ const getTypeColor = (type) => {
     switch (type) {
         case 'income': return 'text-emerald-600 bg-emerald-50'
         case 'expense': return 'text-rose-600 bg-rose-50'
+        case 'transfer': return 'text-slate-600 bg-slate-100'
         default: return 'text-gray-600 bg-gray-50'
     }
 }
@@ -20,6 +21,8 @@ const getStatusColor = (status) => {
 const getPaymentMethodIcon = (method) => {
     const icons = {
         cash: '💰',
+        mpesa: '📱',
+        card: '💳',
         credit_card: '💳',
         debit_card: '💳',
         bank_transfer: '🏦',
@@ -55,9 +58,13 @@ const ExpandedDetails = ({ transaction }) => (
     <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-                <p className="text-xs text-gray-400">Account</p>
+                <p className="text-xs text-gray-400">
+                    {transaction.type === 'transfer' ? 'From → To' : 'Account'}
+                </p>
                 <p className="text-xs text-gray-700 truncate">
-                    {transaction.account?.name || 'Unknown account'}
+                    {transaction.type === 'transfer'
+                        ? `${transaction.from_account?.name || '?'} → ${transaction.to_account?.name || '?'}`
+                        : (transaction.account?.name || 'Unknown account')}
                 </p>
             </div>
             {transaction.category && (
@@ -89,6 +96,9 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
     const [showDetails, setShowDetails] = useState(false)
     
     const isIncome = transaction.type === 'income'
+    const isTransfer = transaction.type === 'transfer'
+    const amountPrefix = isTransfer ? '' : isIncome ? '+' : '-'
+    const amountColor = isTransfer ? 'text-slate-600' : isIncome ? 'text-emerald-600' : 'text-rose-600'
     const paymentMethod = transaction.paymentMethod || transaction.payment_method
 
     return (
@@ -104,8 +114,8 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
                             {formatDate(transaction.transactionDate || transaction.transaction_date)}
                         </p>
                     </div>
-                    <span className={`text-sm font-bold shrink-0 ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount, transaction.account?.currency)}
+                    <span className={`text-sm font-bold shrink-0 ${amountColor}`}>
+                        {amountPrefix}{formatCurrency(transaction.amount, transaction.account?.currency)}
                     </span>
                 </div>
 
@@ -185,8 +195,8 @@ const TransactionRow = ({ transaction, onEdit, onDelete, isDeleting }) => {
 
                 {/* Amount */}
                 <div className="col-span-2 text-right">
-                    <span className={`text-sm font-bold ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount, transaction.account?.currency)}
+                    <span className={`text-sm font-bold ${amountColor}`}>
+                        {amountPrefix}{formatCurrency(transaction.amount, transaction.account?.currency)}
                     </span>
                 </div>
 

@@ -58,3 +58,13 @@ func (ur *UserRepository) UpdateUser(user *models.User) error {
 	result := ur.db.Save(user)
 	return result.Error
 }
+
+// ListUsers returns every user. Used only by the background scheduler to
+// iterate snapshots/recurring jobs; never expose this over the API.
+func (ur *UserRepository) ListUsers() ([]models.User, error) {
+	users := []models.User{}
+	if err := ur.db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}

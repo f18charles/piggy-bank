@@ -78,12 +78,14 @@ func (s *SummaryService) buildMonthlySummary(user_id uuid.UUID, year int, month 
 	for _, tx := range transactions {
 		if tx.Type == "income" {
 			mon_summary.Income += tx.Amount
-		} else {
+		} else if tx.Type == "expense" {
 			mon_summary.Expenses += tx.Amount
 			if tx.CategoryID != nil {
 				categorySpends[*tx.CategoryID] += tx.Amount
 			}
 		}
+		// transfers are money movement between own accounts, not income or
+		// expense, so they are excluded from both totals (LONG_TERM_USE §1.1)
 	}
 
 	mon_summary.Savings = mon_summary.Income - mon_summary.Expenses

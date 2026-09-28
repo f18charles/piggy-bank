@@ -88,9 +88,7 @@ const Transactions = () => {
         setActionError(null)
         try {
             if (editingTransaction) {
-                await apiPatch(`/transactions/${editingTransaction.id}`, { 
-                    description: payload.description 
-                })
+                await apiPatch(`/transactions/${editingTransaction.id}`, payload)
             } else {
                 await apiPost("/transactions", payload)
             }
@@ -237,6 +235,7 @@ const Transactions = () => {
                     <option value="all">All Types</option>
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
+                    <option value="transfer">Transfer</option>
                 </select>
                 <select
                     value={filterStatus}

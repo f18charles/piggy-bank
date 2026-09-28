@@ -53,17 +53,52 @@ func (th *TransactionHandler) CreateTransactions(c *gin.Context) {
 	}
 	tx, err := th.transactionService.TxCreate(id, txreq)
 	if err != nil {
-		slog.Error("CreateTransactions failed",
-			"user_id", id,
-			"account_id", txreq.AccountID,
-			"amount", txreq.Amount,
-			"type", txreq.Type,
-			"error", err.Error(),
-		)
-		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to create transaction")
+		switch err {
+		case utils.ErrBadRequest:
+			utils.ErrorResponse(c, http.StatusBadRequest, "invalid transaction payload")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to use this account")
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "account not found")
+		default:
+			slog.Error("CreateTransactions failed",
+				"user_id", id,
+				"account_id", txreq.AccountID,
+				"amount", txreq.Amount,
+				"type", txreq.Type,
+				"error", err.Error(),
+			)
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to create transaction")
+		}
 		return
 	}
 	utils.SuccessResponse(c, http.StatusOK, tx)
+}
+
+// CreateTransactionsBulk ingests an array of transactions in one request,
+// skipping duplicates by reference_id. Intended for future SMS/bank
+// ingestion clients.
+func (th *TransactionHandler) CreateTransactionsBulk(c *gin.Context) {
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	var reqs []services.TxCreateRequest
+	if err := c.ShouldBindJSON(&reqs); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	result, err := th.transactionService.TxCreateBulk(id, reqs)
+	if err != nil {
+		if err == utils.ErrBadRequest {
+			utils.ErrorResponse(c, http.StatusBadRequest, "expected between 1 and 500 transactions")
+			return
+		}
+		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to ingest transactions")
+		return
+	}
+	utils.SuccessResponse(c, http.StatusOK, result)
 }
 
 // GetTransaction retrieves a single transaction by ID for the authenticated user.
@@ -109,7 +144,17 @@ func (th *TransactionHandler) UpdateTransaction(c *gin.Context) {
 
 	tx, err := th.transactionService.TxUpdate(id, txID, req)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "failed to update")
+		switch err {
+		case utils.ErrBadRequest:
+			utils.ErrorResponse(c, http.StatusBadRequest, "invalid transaction update")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to update this transaction")
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "transaction or account not found")
+		default:
+			slog.Error("UpdateTransaction failed", "user_id", id, "tx_id", txID, "error", err.Error())
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to update")
+		}
 		return
 	}
 	utils.SuccessResponse(c, http.StatusOK, tx)

@@ -27,7 +27,7 @@ func (tr *TransactionRepo) CreateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) GetTransactionByID(txID uuid.UUID) (*models.Transaction, error) {
 	var tx models.Transaction
-	result := tr.Db.Where("id = ?", txID).Preload("Account").Preload("Category").Preload("Goal").First(&tx)
+	result := tr.Db.Where("id = ?", txID).Preload("Account").Preload("Category").Preload("Goal").Preload("FromAccount").Preload("ToAccount").First(&tx)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, utils.ErrNotFound
@@ -44,7 +44,7 @@ func (tr *TransactionRepo) UpdateTransaction(tx *models.Transaction) error {
 
 func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Transaction, error) {
 	txs := []models.Transaction{}
-	result := tr.Db.Where("user_id = ?", userID).Preload("Account").Preload("Category").Preload("Goal").Find(&txs)
+	result := tr.Db.Where("user_id = ?", userID).Preload("Account").Preload("Category").Preload("Goal").Preload("FromAccount").Preload("ToAccount").Find(&txs)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -53,7 +53,7 @@ func (tr *TransactionRepo) ListTransactionsByUser(userID uuid.UUID) ([]models.Tr
 
 func (tr *TransactionRepo) ListTransactionsByUserSince(user_id uuid.UUID, since_date time.Time) ([]models.Transaction, error) {
 	var txs []models.Transaction
-	result := tr.Db.Where("user_id = ? AND COALESCE(transaction_date, created_at) >= ?", user_id, since_date).Preload("Account").Preload("Category").Preload("Goal").Order("transaction_date DESC").Find(&txs)
+	result := tr.Db.Where("user_id = ? AND COALESCE(transaction_date, created_at) >= ?", user_id, since_date).Preload("Account").Preload("Category").Preload("Goal").Preload("FromAccount").Preload("ToAccount").Order("transaction_date DESC").Find(&txs)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -67,4 +67,21 @@ func (tr *TransactionRepo) DeleteTransaction(id uuid.UUID) error {
 		return result.Error
 	}
 	return nil
+}
+
+// ExistsByReferenceID reports whether the user already has a transaction
+// with the given external reference. Used to make bulk/SMS ingestion
+// idempotent. An empty reference is never considered a duplicate.
+func (tr *TransactionRepo) ExistsByReferenceID(userID uuid.UUID, referenceID string) (bool, error) {
+	if referenceID == "" {
+		return false, nil
+	}
+	var count int64
+	err := tr.Db.Model(&models.Transaction{}).
+		Where("user_id = ? AND reference_id = ?", userID, referenceID).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

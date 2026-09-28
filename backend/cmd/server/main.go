@@ -7,6 +7,7 @@ import (
 	"github.com/f18charles/piggy-bank/backend/internal/auth"
 	"github.com/f18charles/piggy-bank/backend/internal/config"
 	"github.com/f18charles/piggy-bank/backend/internal/database"
+	"github.com/f18charles/piggy-bank/backend/internal/services"
 	"github.com/f18charles/piggy-bank/backend/internal/utils"
 )
 
@@ -21,6 +22,9 @@ func main() {
 	if database.DB != nil {
 		auth.InitRevocation(database.DB)
 		auth.StartBlacklistPruner()
+		// Recurring transactions and net-worth snapshots run in the
+		// background; see services.StartSchedulers.
+		services.StartSchedulers(database.DB)
 	}
 
 	// setup logger

@@ -125,6 +125,33 @@ func (gh *GoalHandler) DeleteGoal(c *gin.Context) {
 	utils.SuccessResponse(c, http.StatusOK, gin.H{"message": "goal deleted successfully"})
 }
 
+// GetGoalHistory returns the cumulative savings curve for a goal.
+func (gh *GoalHandler) GetGoalHistory(c *gin.Context) {
+	id, err := auth.ConfirmAuthedUser(c)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	goal_id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "invalid goal id")
+		return
+	}
+	points, err := gh.goalService.GoalHistory(id, goal_id)
+	if err != nil {
+		switch err {
+		case utils.ErrNotFound:
+			utils.ErrorResponse(c, http.StatusNotFound, "goal not found")
+		case utils.ErrForbidden:
+			utils.ErrorResponse(c, http.StatusForbidden, "not allowed to view this goal")
+		default:
+			utils.ErrorResponse(c, http.StatusInternalServerError, "failed to load goal history")
+		}
+		return
+	}
+	utils.SuccessResponse(c, http.StatusOK, points)
+}
+
 // ContributeToGoal moves money from an account into a goal.
 func (gh *GoalHandler) ContributeToGoal(c *gin.Context) {
 	id, err := auth.ConfirmAuthedUser(c)
