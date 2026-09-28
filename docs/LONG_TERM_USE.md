@@ -119,10 +119,13 @@ CREATE TABLE net_worth_snapshots (
 
 ## 📋 Action Plan & Phased Implementation
 
-| Phase | Milestone | Priority |
-|---|---|---|
-| **Phase 1** | Implement Inter-Account Transfers & Full Transaction Editing | Immediate |
-| **Phase 2** | Convert Budgets to Dynamic Monthly Calculations | Short-Term |
-| **Phase 3** | Implement Recurring Transactions & Net Worth Snapshots | Medium-Term |
-| **Phase 4** | Integrate Interactive Recharts Frontend Visualizations | Medium-Term |
-| **Phase 5** | Mobile SMS Ingestion API Preparation & AI Hook Interfaces | Long-Term |
+> **Status:** Phases 1–5 are implemented as of the `feat/long-term-roadmap` branch.
+> See `DESIGN.md` and `docs/API.md` for the current behavior.
+
+| Phase | Milestone | Priority | Status |
+|---|---|---|---|
+| **Phase 1** | Implement Inter-Account Transfers & Full Transaction Editing | Immediate | Done |
+| **Phase 2** | Convert Budgets to Dynamic Monthly Calculations | Short-Term | Done (`budgets.spent` dropped) |
+| **Phase 3** | Implement Recurring Transactions & Net Worth Snapshots | Medium-Term | Done (background scheduler) |
+| **Phase 4** | Integrate Interactive Recharts Frontend Visualizations | Medium-Term | Done (Dashboard, Insights, Goals) |
+| **Phase 5** | Mobile SMS Ingestion API Preparation & AI Hook Interfaces | Long-Term | Backend boundary done; no provider/client built |
