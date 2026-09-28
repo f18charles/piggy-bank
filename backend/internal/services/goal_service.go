@@ -123,6 +123,46 @@ type GoalWithdrawRequest struct {
 	Amount    float64   `json:"amount" binding:"required"`
 }
 
+// GoalHistoryPoint is a single point on a goal's savings growth curve.
+type GoalHistoryPoint struct {
+	Date       string  `json:"date"`
+	Change     float64 `json:"change"`
+	Cumulative float64 `json:"cumulative"`
+}
+
+// GoalHistory returns the cumulative savings curve for a goal, derived from
+// its linked transactions (contributions increase, withdrawals decrease).
+func (gs *GoalService) GoalHistory(user_id, goal_id uuid.UUID) ([]GoalHistoryPoint, error) {
+	goal, err := gs.goalRepo.GetGoalByID(goal_id)
+	if err != nil {
+		return nil, err
+	}
+	if goal.UserID != user_id {
+		return nil, utils.ErrForbidden
+	}
+
+	txs, err := gs.goalRepo.ListGoalTransactions(goal_id, user_id)
+	if err != nil {
+		return nil, err
+	}
+
+	points := []GoalHistoryPoint{}
+	cumulative := 0.0
+	for _, tx := range txs {
+		change := tx.Amount
+		if tx.Type == "income" { // withdrawal returns money to the account
+			change = -tx.Amount
+		}
+		cumulative += change
+		points = append(points, GoalHistoryPoint{
+			Date:       tx.TransactionDate.Format("2006-01-02"),
+			Change:     change,
+			Cumulative: cumulative,
+		})
+	}
+	return points, nil
+}
+
 // GoalContribute moves money from the given account into the goal. This is
 // always allowed, including past the target amount (overfunding). It debits
 // the account balance, credits the goal's current amount, and records a
